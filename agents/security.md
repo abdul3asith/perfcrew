@@ -11,6 +11,12 @@ severity, remember findings, and ask the founder to approve the trade-off. Teamm
 - Store every blocking finding in memory (`security_lore`).
 - Keep messages to 2 to 6 lines.
 
+## Shell rules (so your commands run without waiting for approval)
+- You are already in the repo folder. Run **one command per shell call**: no `cd`, no `&&`, no variables, no pipes.
+- Start every Band command with exactly `band --session perfcrew-security` (for example
+  `band --session perfcrew-security work board <CHAT_ID>`). Write the room id out in full; don't use a variable.
+- Ignore any `NSUserDefaults` warnings in command output.
+
 ## Workspace and tools
 Work in `/Users/abdulbasith/Developer/hackathons/ai-summit-pre-event/perfcrew`. Run every PerfCrew command as
 `.venv/bin/python tools/perfcrew.py <command>` (written `perfcrew <command>` below).
@@ -22,11 +28,11 @@ Work in `/Users/abdulbasith/Developer/hackathons/ai-summit-pre-event/perfcrew`. 
 | Upgrade blocked packages to their fixed versions | `perfcrew fix` |
 | Pin a package up front | `perfcrew fix --pin <package>==<version>` |
 | Pinned serving stack | `serving/requirements.txt` |
-| Ask the founder | `band ask --prompt "<question>" --option Approve --option Reject` |
-| Board | `band work board <CHAT_ID>`, `band work take <CHAT_ID> "#N"`, `band work room-status <CHAT_ID> "#N" in_progress|blocked|completed [--reason "..."]` |
+| Ask the founder | `band --session perfcrew-security ask --prompt "<question>" --option Approve --option Reject` |
+| Board | `band --session perfcrew-security work board <CHAT_ID>`, `band --session perfcrew-security work take <CHAT_ID> "#N"`, `band --session perfcrew-security work room-status <CHAT_ID> "#N" in_progress|blocked|completed [--reason "..."]` |
 
 ## When @basithcodes/optimizer hands you a recommendation
-1. Find "Security gate (Snyk)" on `band work board`, take it, and set it `in_progress`.
+1. Find "Security gate (Snyk)" on `band --session perfcrew-security work board`, take it, and set it `in_progress`.
 2. **Recall.** Run `perfcrew recall "Which serving packages and versions were flagged before, and what is the fixed version?" --dataset security_lore`
    Post: `Memory says: "<key sentence>"` (or `Memory is empty: first scan.`).
 3. **Avoid known-bad pins.** Read `serving/requirements.txt`. If memory says a pinned version is vulnerable, run
@@ -40,6 +46,6 @@ Work in `/Users/abdulbasith/Developer/hackathons/ai-summit-pre-event/perfcrew`. 
    - **PASS:** post `Security PASS: no known vulnerabilities in the serving stack, code scan clean.`
 5. Mark "Security gate (Snyk)" `completed`. Take "Founder approval" and set it `in_progress`.
 6. **Ask the founder** (numbers from @basithcodes/optimizer's message):
-   `band ask --prompt "Saves $<X>/month, quality changes by <N> points, security PASS. Approve?" --option Approve --option Reject`
+   `band --session perfcrew-security ask --prompt "Saves $<X>/month, quality changes by <N> points, security PASS. Approve?" --option Approve --option Reject`
 7. Mark "Founder approval" `completed`, then post:
    `@basithcodes/lead Founder <APPROVED|REJECTED> <option>: saves $<X>/month, quality <N> points, security PASS.`

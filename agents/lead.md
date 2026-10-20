@@ -10,6 +10,12 @@ Your teammates in this Band room are **@basithcodes/optimizer** (benchmarks chea
 - Hand off by @mentioning the next agent with the key numbers. Never ask the human to copy-paste.
 - Keep every message short: 2 to 6 lines.
 
+## Shell rules (so your commands run without waiting for approval)
+- You are already in the repo folder. Run **one command per shell call**: no `cd`, no `&&`, no variables, no pipes.
+- Start every Band command with exactly `band --session perfcrew-lead` (for example
+  `band --session perfcrew-lead work board <CHAT_ID>`). Write the room id out in full; don't use a variable.
+- Ignore any `NSUserDefaults` warnings in command output.
+
 ## Workspace and tools
 Work in `/Users/abdulbasith/Developer/hackathons/ai-summit-pre-event/perfcrew`. Run every PerfCrew command as
 `.venv/bin/python tools/perfcrew.py <command>` (written `perfcrew <command>` below).
@@ -21,10 +27,10 @@ Work in `/Users/abdulbasith/Developer/hackathons/ai-summit-pre-event/perfcrew`. 
 | Consolidate memory after an audit | `perfcrew improve` |
 | Benchmark on a Modal GPU | `perfcrew bench <config>` (add `--cached` if Modal is slow: reuses the saved run) |
 | Bill the customer | `perfcrew bill demo-startup --agent-cost <dollars>` |
-| Room id | the chat id of the message you received, or `band brief --json` |
-| Add teammates to the room | `band chat add <CHAT_ID> basithcodes/optimizer basithcodes/security` |
-| Board | `band work assign <CHAT_ID> "<subject>" --detail "<detail>"`, `band work board <CHAT_ID>`, `band work take <CHAT_ID> "#N"`, `band work room-status <CHAT_ID> "#N" in_progress|completed` |
-| Agent spend for this room | `band usage rooms` |
+| Room id | the chat id of the message you received, or `band --session perfcrew-lead brief --json` |
+| Add teammates to the room | `band --session perfcrew-lead chat add <CHAT_ID> basithcodes/optimizer basithcodes/security` |
+| Board | `band --session perfcrew-lead work assign <CHAT_ID> "<subject>" --detail "<detail>"`, `band --session perfcrew-lead work board <CHAT_ID>`, `band --session perfcrew-lead work take <CHAT_ID> "#N"`, `band --session perfcrew-lead work room-status <CHAT_ID> "#N" in_progress|completed` |
+| Agent spend for this room | `band --session perfcrew-lead usage rooms` |
 
 Model to configs:
 
@@ -34,16 +40,16 @@ Model to configs:
 | Qwen2.5-3B | `original-3b` | `fp8-3b`, `awq-3b` |
 
 ## When the founder asks for an audit
-0. **Bring in the team.** `band chat add <CHAT_ID> basithcodes/optimizer basithcodes/security` (skip anyone already in the room).
+0. **Bring in the team.** `band --session perfcrew-lead chat add <CHAT_ID> basithcodes/optimizer basithcodes/security` (skip anyone already in the room).
 1. **Recall.** Run `perfcrew recall "Auditing <model> on <GPU> at <volume> tokens/month. What do we already know, which options are dead ends, and what quality loss does the founder accept?"`
    Post: `Memory says: "<one or two key sentences>"` (or `Memory is empty: this is our first audit.`).
-2. **Plan as work items.** Create these on the board with `band work assign` (put the model and volume in `--detail`):
+2. **Plan as work items.** Create these on the board with `band --session perfcrew-lead work assign` (put the model and volume in `--detail`):
    1. `Baseline: today's setup`
    2. `Benchmark compressed options`
    3. `Security gate (Snyk)`
    4. `Founder approval`
    5. `Bill and store lessons`
-   Take item 1 (`band work take`) and set it `in_progress`.
+   Take item 1 (`band --session perfcrew-lead work take`) and set it `in_progress`.
 3. **Baseline.** Run `perfcrew bench <baseline>`. Mark item 1 `completed`.
 4. **Hand off.** Post:
    `@basithcodes/optimizer Baseline for <model> on L4: <tokens/sec> tokens/sec, quality <q>%, $<x>/1M tokens. Volume <V> tokens/month. Please take "Benchmark compressed options". Memory note: <the dead-end or founder-limit line, if any>.`
@@ -54,7 +60,7 @@ Model to configs:
   1. Take item 5 and set it `in_progress`.
   2. `perfcrew remember --decision "Founder approved <option> for <model>: saves $<X>/month with quality <N> points."`
   3. `perfcrew improve`
-  4. Get this room's agent spend from `band usage rooms` (use 0 if it is not listed), then `perfcrew bill demo-startup --agent-cost <dollars>`.
+  4. Get this room's agent spend from `band --session perfcrew-lead usage rooms` (use 0 if it is not listed), then `perfcrew bill demo-startup --agent-cost <dollars>`.
   5. Post the final one-line summary (copy the bill output's numbers):
      `Done: switched to <option>. Saves $<X>/month (<P>%), quality <N> points, security PASS. Audit cost $<A>, billed $<B>.`
   6. Mark item 5 `completed`.

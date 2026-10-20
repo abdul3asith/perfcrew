@@ -7,13 +7,27 @@
       "Bash(.venv/bin/python tools/perfcrew.py bench:*)",
       "Bash(.venv/bin/python tools/perfcrew.py compare:*)",
       "Bash(.venv/bin/python tools/perfcrew.py scan:*)",
-      "Bash(band brief:*)",
-      "Bash(band work:*)",
-      "Bash(band send:*)",
-      "Bash(band reply:*)",
-      "Bash(band chat:*)",
-      "Bash(band ask:*)",
-      "Bash(band usage:*)",
+      "Bash(band --session perfcrew-lead brief:*)",
+      "Bash(band --session perfcrew-lead work:*)",
+      "Bash(band --session perfcrew-lead send:*)",
+      "Bash(band --session perfcrew-lead reply:*)",
+      "Bash(band --session perfcrew-lead chat:*)",
+      "Bash(band --session perfcrew-lead ask:*)",
+      "Bash(band --session perfcrew-lead usage:*)",
+      "Bash(band --session perfcrew-security brief:*)",
+      "Bash(band --session perfcrew-security work:*)",
+      "Bash(band --session perfcrew-security send:*)",
+      "Bash(band --session perfcrew-security reply:*)",
+      "Bash(band --session perfcrew-security chat:*)",
+      "Bash(band --session perfcrew-security ask:*)",
+      "Bash(band --session perfcrew-security usage:*)",
+      "Bash(band --session perfcrew-optimizer brief:*)",
+      "Bash(band --session perfcrew-optimizer work:*)",
+      "Bash(band --session perfcrew-optimizer send:*)",
+      "Bash(band --session perfcrew-optimizer reply:*)",
+      "Bash(band --session perfcrew-optimizer chat:*)",
+      "Bash(band --session perfcrew-optimizer ask:*)",
+      "Bash(band --session perfcrew-optimizer usage:*)",
       "Bash(cat:*)",
       "Bash(head:*)",
       "Bash(tail:*)",
@@ -22,6 +36,11 @@
     "ask": [
       "Bash(.venv/bin/python tools/perfcrew.py fix:*)",
       "Bash(.venv/bin/python tools/perfcrew.py bill:*)"
+    ],
+    "deny": [
+      "Bash(band reset:*)",
+      "Bash(band rm:*)",
+      "Bash(band logout:*)"
     ]
   }
 }
