@@ -1,0 +1,5 @@
+#1 [Completed] Baseline: today's setup  · by lead (@basithcodes/lead) [agent]
+#2 [Completed] Benchmark compressed options  · by lead (@basithcodes/lead) [agent]
+#3 [Completed] Security gate (Snyk)  · by lead (@basithcodes/lead) [agent]
+#4 [Completed] Founder approval  · by lead (@basithcodes/lead) [agent]
+#5 [Completed] Bill and store lessons  · by lead (@basithcodes/lead) [agent]

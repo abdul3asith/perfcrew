@@ -1,0 +1,12 @@
+{
+  "verdict": "PASS",
+  "timestamp": "2026-10-20T20:43:01+00:00",
+  "requirements": "serving/requirements.txt",
+  "dependency_findings": [],
+  "code_scan": {
+    "status": "PASS",
+    "issues": 0,
+    "high": 0
+  },
+  "memory_notes": []
+}
