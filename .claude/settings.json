@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/bin/python tools/perfcrew.py recall:*)",
+      "Bash(.venv/bin/python tools/perfcrew.py remember:*)",
+      "Bash(.venv/bin/python tools/perfcrew.py improve:*)",
+      "Bash(.venv/bin/python tools/perfcrew.py bench:*)",
+      "Bash(.venv/bin/python tools/perfcrew.py compare:*)",
+      "Bash(.venv/bin/python tools/perfcrew.py scan:*)",
+      "Bash(band brief:*)",
+      "Bash(band work:*)",
+      "Bash(band send:*)",
+      "Bash(band reply:*)",
+      "Bash(band chat:*)",
+      "Bash(band ask:*)",
+      "Bash(band usage:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)"
+    ],
+    "ask": [
+      "Bash(.venv/bin/python tools/perfcrew.py fix:*)",
+      "Bash(.venv/bin/python tools/perfcrew.py bill:*)"
+    ]
+  }
+}
