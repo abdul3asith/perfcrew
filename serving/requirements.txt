@@ -2,6 +2,6 @@
 # This file is what the Snyk security gate scans.
 fastapi==0.156.1
 uvicorn==0.54.0
-aiohttp==3.9.1
+aiohttp==3.14.4
 pydantic==2.14.1
 huggingface_hub==2.2.0
