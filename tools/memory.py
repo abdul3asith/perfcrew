@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+MEMORY_DIR = Path(os.getenv("PERFCREW_MEMORY_DIR", ROOT / ".cognee"))
 DATASETS = ["perf_lore", "security_lore"]
 FRAMING = {
     "perf_lore": "Performance lessons, dead ends and founder decisions relevant to: ",
@@ -22,8 +23,8 @@ FRAMING = {
 }
 
 
-def _env(dataset: str) -> dict:
-    store = ROOT / ".cognee" / dataset
+def _env(dataset: str, memory_dir: Path | None = None) -> dict:
+    store = (memory_dir or MEMORY_DIR) / dataset
     return {**os.environ,
             "SYSTEM_ROOT_DIRECTORY": str(store / "system"),
             "DATA_ROOT_DIRECTORY": str(store / "data"),
@@ -31,8 +32,8 @@ def _env(dataset: str) -> dict:
             "CACHING": "false"}  # no session memory carrying answers between calls
 
 
-def _spawn(op: str, dataset: str, text: str = "") -> subprocess.Popen:
-    return subprocess.Popen([sys.executable, __file__, op, dataset, text], env=_env(dataset),
+def _spawn(op: str, dataset: str, text: str = "", memory_dir: Path | None = None) -> subprocess.Popen:
+    return subprocess.Popen([sys.executable, __file__, op, dataset, text], env=_env(dataset, memory_dir),
                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
 
@@ -59,6 +60,14 @@ def improve(dataset: str = "perf_lore") -> str:
 
 def forget(dataset: str) -> str:
     return _result(_spawn("forget", dataset))
+
+
+def graph(questions: dict[str, list[str]], memory_dir: Path) -> dict:
+    """Export each dataset's knowledge graph (+ schema inventory and the subgraph each question lights up).
+
+    Reads `memory_dir`, which should be a snapshot copy so live agents keep their database locks."""
+    procs = [(ds, _spawn("graph", ds, json.dumps(questions.get(ds, [])), memory_dir)) for ds in DATASETS]
+    return {ds: _result(p) for ds, p in procs}
 
 
 # ---- child process: talks to Cognee for exactly one dataset ----
@@ -97,7 +106,36 @@ async def _worker(op: str, dataset: str, text: str) -> str:
         except Exception as e:
             return f"nothing to forget ({type(e).__name__})"
         return "forgotten"
+    if op == "graph":
+        return await _export_graph(dataset, json.loads(text or "[]"))
     raise ValueError(op)
+
+
+async def _export_graph(dataset: str, questions: list[str]) -> dict:
+    """Cognee's own visualization export, schema inventory, and per-question recall paths for one dataset."""
+    import cognee
+    from cognee.api.v1.visualize.get_schema_inventory import get_schema_inventory
+    from cognee.api.v1.visualize.visualize import visualize_graph_json
+
+    try:
+        full = await visualize_graph_json(dataset=dataset, full=True, include_session_events=False)
+    except Exception as e:  # dataset empty or never created
+        return {"nodes": [], "links": [], "inventory": [], "questions": [], "error": type(e).__name__}
+    keep = ("id", "name", "type", "entity_type", "text", "t_created", "degree", "importance", "source_task")
+    nodes = [{k: n.get(k) for k in keep} for n in full["nodes"]]
+    links = [{"source": l["source"], "target": l["target"], "relation": l.get("relation")} for l in full["links"]]
+    inventory = await get_schema_inventory(dataset=dataset)
+
+    paths = []
+    for q in questions:
+        sub = await visualize_graph_json(dataset=dataset, query=FRAMING[dataset] + q, include_session_events=False,
+                                         neighborhood_seed_top_k=2, neighborhood_depth=1)
+        res = await cognee.recall(FRAMING[dataset] + q, datasets=[dataset])
+        answer = " ".join(t for t in (getattr(r, "text", None) for r in res) if t).strip()
+        paths.append({"question": q, "answer": answer, "node_ids": [n["id"] for n in sub["nodes"]]})
+    return {"nodes": nodes, "links": links,
+            "inventory": [{k: i.get(k) for k in ("type", "count", "samples", "relationships")} for i in inventory],
+            "questions": paths}
 
 
 if __name__ == "__main__":
