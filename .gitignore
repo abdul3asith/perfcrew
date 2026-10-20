@@ -6,3 +6,5 @@ __pycache__/
 .data_storage/
 .DS_Store
 .cognee/
+serving/.venv-vllm/
+.venv
