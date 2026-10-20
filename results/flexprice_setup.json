@@ -5,6 +5,7 @@
   "subscriptions": {
     "demo-startup": "subs_01M5DD0P8KMPM5J3Z57MZXZH21",
     "acme-ai": "subs_01M5DFE92GCD85RBQSPDK2GE0K",
-    "perfcrew-test": "subs_01M5DHYE91YBXMH42SPWJPANWS"
+    "perfcrew-test": "subs_01M5DHYE91YBXMH42SPWJPANWS",
+    "acme-ai-demo": "subs_01M5DMHVMZBYBMTA89HXZW3DR9"
   }
 }

@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-10-20T20:56:42+00:00",
+ "generated_at": "2026-10-20T21:50:29+00:00",
  "stats": {
-  "memories": 6,
-  "entities": 14,
-  "relations": 91,
+  "memories": 10,
+  "entities": 28,
+  "relations": 175,
   "conflicts": 1
  },
  "datasets": {
@@ -17,7 +17,7 @@
      "text": "This chunk is about: - Models: Qwen2.5-1.5B - Quantization: AWQ - Hardware: NVIDIA L4 - Software: vLLM 0.32 - Topics: inference speed, cost savings, quality tradeoffs. Facts: - AWQ quantization was applied to Qwen2.5-1.5B running on an L4 GPU with vLLM 0.32. - AWQ made Qwen2.5-1.5B 1.34x faster on the L4 with vLLM 0.32. - At 200B tokens per month, AWQ saved 25% for Qwen2.5-1.5B on the L4 with vLLM 0.32. - AWQ reduced Qwen2.5-1.5B quality by 3.3 points on the L4 with vLLM 0.32.",
      "t_created": 1792528733051,
      "degree": 2,
-     "importance": 0.3877619350384901,
+     "importance": 0.373114300021637,
      "source_task": "extract_graph_and_summarize"
     },
     {
@@ -28,7 +28,7 @@
      "text": "On Qwen2.5-1.5B on an L4 (vLLM 0.32), AWQ was 1.34x faster and saved 25% at 200B tokens/month, quality -3.3 points.",
      "t_created": 1792528727589,
      "degree": 7,
-     "importance": 0.733951626354678,
+     "importance": 0.7062267400999147,
      "source_task": "extract_chunks_from_documents"
     },
     {
@@ -39,7 +39,7 @@
      "text": null,
      "t_created": 1792528727580,
      "degree": 1,
-     "importance": 0.244650542118226,
+     "importance": 0.23540891336663824,
      "source_task": "classify_documents"
     },
     {
@@ -50,7 +50,7 @@
      "text": null,
      "t_created": 1792529258297,
      "degree": 13,
-     "importance": 0.931471445717889,
+     "importance": 0.8962852850027022,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -59,9 +59,9 @@
      "type": "EntityType",
      "entity_type": "EntityType",
      "text": null,
-     "t_created": 1792529258297,
-     "degree": 1,
-     "importance": 0.244650542118226,
+     "t_created": 1792532683787,
+     "degree": 4,
+     "importance": 0.5466025697329024,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -70,9 +70,9 @@
      "type": "Entity",
      "entity_type": "hardware",
      "text": null,
-     "t_created": 1792529163703,
-     "degree": 8,
-     "importance": 0.7755238700769802,
+     "t_created": 1792532683787,
+     "degree": 18,
+     "importance": 1.0,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -81,9 +81,9 @@
      "type": "EntityType",
      "entity_type": "EntityType",
      "text": null,
-     "t_created": 1792529163703,
+     "t_created": 1792532683787,
      "degree": 1,
-     "importance": 0.244650542118226,
+     "importance": 0.23540891336663824,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -92,9 +92,9 @@
      "type": "Entity",
      "entity_type": "software",
      "text": null,
-     "t_created": 1792528762638,
-     "degree": 4,
-     "importance": 0.5680609671737329,
+     "t_created": 1792532292726,
+     "degree": 6,
+     "importance": 0.6608763716360639,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -103,9 +103,9 @@
      "type": "EntityType",
      "entity_type": "EntityType",
      "text": null,
-     "t_created": 1792528762638,
+     "t_created": 1792532292726,
      "degree": 1,
-     "importance": 0.244650542118226,
+     "importance": 0.23540891336663824,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -116,7 +116,7 @@
      "text": null,
      "t_created": 1792529258297,
      "degree": 16,
-     "importance": 1.0,
+     "importance": 0.9622251858852542,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -127,7 +127,7 @@
      "text": null,
      "t_created": 1792528752978,
      "degree": 2,
-     "importance": 0.3877619350384901,
+     "importance": 0.373114300021637,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -138,7 +138,7 @@
      "text": "This chunk is about: - Models: Qwen2.5-1.5B - Hardware: NVIDIA L4 - Quantization methods: FP8, AWQ - Concepts: inference speed, output quality. Facts: - On Qwen2.5-1.5B running on an L4, FP8 quantization was slower than AWQ quantization. - On Qwen2.5-1.5B running on an L4, FP8 quantization gave no better quality than AWQ. - The author concludes that FP8 is a dead end for 1.5B models on an L4.",
      "t_created": 1792528752783,
      "degree": 2,
-     "importance": 0.3877619350384901,
+     "importance": 0.373114300021637,
      "source_task": "extract_graph_and_summarize"
     },
     {
@@ -149,7 +149,7 @@
      "text": "On Qwen2.5-1.5B on an L4, FP8 was slower than AWQ with no better quality, so FP8 is a dead end for 1.5B models on L4.",
      "t_created": 1792528748525,
      "degree": 7,
-     "importance": 0.733951626354678,
+     "importance": 0.7062267400999147,
      "source_task": "extract_chunks_from_documents"
     },
     {
@@ -160,7 +160,7 @@
      "text": null,
      "t_created": 1792528748516,
      "degree": 1,
-     "importance": 0.244650542118226,
+     "importance": 0.23540891336663824,
      "source_task": "classify_documents"
     },
     {
@@ -171,7 +171,7 @@
      "text": null,
      "t_created": 1792529163703,
      "degree": 8,
-     "importance": 0.7755238700769802,
+     "importance": 0.746228600043274,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -182,7 +182,7 @@
      "text": null,
      "t_created": 1792528752978,
      "degree": 3,
-     "importance": 0.489301084236452,
+     "importance": 0.4708178267332765,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -193,7 +193,7 @@
      "text": null,
      "t_created": 1792529258297,
      "degree": 3,
-     "importance": 0.489301084236452,
+     "importance": 0.4708178267332765,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -204,7 +204,7 @@
      "text": "This chunk is about:\n- Models: Qwen2.5-1.5B\n- Hardware: NVIDIA L4 GPU\n- Systems: vLLM 0.32\n- Concepts: AWQ quantization, inference speed, cost savings, output quality\n\nFacts:\n- AWQ quantization was tested on Qwen2.5-1.5B running on an L4 GPU with vLLM 0.32.\n- AWQ quantization made Qwen2.5-1.5B 1.35x faster on an L4 GPU with vLLM 0.32.\n- At 200B tokens per month, AWQ quantization of Qwen2.5-1.5B on an L4 GPU with vLLM 0.32 saved 26%.\n- AWQ quantization of Qwen2.5-1.5B on an L4 GPU with vLLM 0.32 lowered quality by 3.3 points.",
      "t_created": 1792528762681,
      "degree": 2,
-     "importance": 0.3877619350384901,
+     "importance": 0.373114300021637,
      "source_task": "extract_graph_and_summarize"
     },
     {
@@ -215,7 +215,7 @@
      "text": "On Qwen2.5-1.5B on an L4 (vLLM 0.32), AWQ was 1.35x faster and saved 26% at 200B tokens/month, quality -3.3 points.",
      "t_created": 1792528757475,
      "degree": 7,
-     "importance": 0.733951626354678,
+     "importance": 0.7062267400999147,
      "source_task": "extract_chunks_from_documents"
     },
     {
@@ -226,7 +226,7 @@
      "text": null,
      "t_created": 1792528757467,
      "degree": 1,
-     "importance": 0.244650542118226,
+     "importance": 0.23540891336663824,
      "source_task": "classify_documents"
     },
     {
@@ -237,7 +237,7 @@
      "text": null,
      "t_created": 1792528762638,
      "degree": 1,
-     "importance": 0.244650542118226,
+     "importance": 0.23540891336663824,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -248,7 +248,7 @@
      "text": "This chunk is about a founder decision on quantization for the Qwen2.5-1.5B model on L4 GPUs.\n\nThis chunk is about:\n- Decisions: Founder approval of AWQ\n- Models: Qwen2.5-1.5B\n- Systems: L4 GPU, AWQ, FP8\n- Topics: Cost savings, quality, security review\n\nFacts:\n- The founder approved AWQ (compressed) for the Qwen2.5-1.5B model on the L4 GPU.\n- AWQ saves $1,880 per month, a 26% cost reduction for the Qwen2.5-1.5B deployment on L4.\n- AWQ quality is 3.4 points lower for the Qwen2.5-1.5B model on L4.\n- The AWQ deployment of Qwen2.5-1.5B on L4 passed the security review.\n- FP8 is a dead end for Qwen2.5-1.5B on L4 because it is slower than AWQ.\n- FP8 costs $640 per month more than AWQ for Qwen2.5-1.5B on L4 at matching quality.",
      "t_created": 1792529165708,
      "degree": 2,
-     "importance": 0.3877619350384901,
+     "importance": 0.373114300021637,
      "source_task": "extract_graph_and_summarize"
     },
     {
@@ -259,7 +259,7 @@
      "text": "Founder decision: Founder approved AWQ (compressed) for Qwen2.5-1.5B on L4: saves $1,880/month (26%) with quality 3.4 points lower. Security PASS. FP8 is a dead end (slower and $640/month more than AWQ at matching quality).",
      "t_created": 1792529160150,
      "degree": 9,
-     "importance": 0.812711509291959,
+     "importance": 0.7820114830995408,
      "source_task": "extract_chunks_from_documents"
     },
     {
@@ -270,7 +270,7 @@
      "text": null,
      "t_created": 1792529160140,
      "degree": 1,
-     "importance": 0.244650542118226,
+     "importance": 0.23540891336663824,
      "source_task": "classify_documents"
     },
     {
@@ -279,9 +279,9 @@
      "type": "Entity",
      "entity_type": "person",
      "text": null,
-     "t_created": 1792529258297,
-     "degree": 4,
-     "importance": 0.5680609671737329,
+     "t_created": 1792532683786,
+     "degree": 6,
+     "importance": 0.6608763716360639,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -290,9 +290,9 @@
      "type": "EntityType",
      "entity_type": "EntityType",
      "text": null,
-     "t_created": 1792529258297,
+     "t_created": 1792532683786,
      "degree": 1,
-     "importance": 0.244650542118226,
+     "importance": 0.23540891336663824,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -303,7 +303,7 @@
      "text": null,
      "t_created": 1792529163704,
      "degree": 3,
-     "importance": 0.489301084236452,
+     "importance": 0.4708178267332765,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -314,18 +314,18 @@
      "text": null,
      "t_created": 1792529163704,
      "degree": 1,
-     "importance": 0.244650542118226,
+     "importance": 0.23540891336663824,
      "source_task": "extract_graph_from_data"
     },
     {
      "id": "aa0ee606-75d0-5628-b5bb-0a596e899c46",
-     "name": "AWQ's benchmark results on Qwen2.5-1.5B conflict: speedup is given as 1.35x and as 1.34x, savings at 200B tokens per mon",
+     "name": "AWQ's benchmark on Qwen2.5-1.5B is disputed between speedups of 1.34 and 1.35 times, savings of 25 and 26 percent, and q",
      "type": "FactConflict",
      "entity_type": "FactConflict",
-     "text": "AWQ's benchmark results on Qwen2.5-1.5B conflict: speedup is given as 1.35x and as 1.34x, savings at 200B tokens per month as 26% and as 25%, monthly savings as $1,860 and as $1,880, and quality change as -3.3 and as -3.4 points, and nothing orders these values, so they cannot all be true.",
-     "t_created": 1792529307366,
+     "text": "AWQ's benchmark on Qwen2.5-1.5B is disputed between speedups of 1.34 and 1.35 times, savings of 25 and 26 percent, and quality changes of 3.3 and 3.4 points lower, and nothing orders these values, so one source must be wrong.",
+     "t_created": 1792532712290,
      "degree": 6,
-     "importance": 0.686820903599663,
+     "importance": 0.6608763716360639,
      "source_task": null
     },
     {
@@ -336,29 +336,29 @@
      "text": "This area of the dataset is about: - Models: Qwen2.5-1.5B - Hardware: NVIDIA L4 GPU - Quantization methods: AWQ, FP8 - Roles: Founder - Concepts: inference speed, output quality, cost savings, security review. Facts: - On Qwen2.5-1.5B running on an L4, FP8 quantization was slower than AWQ and gave no better output quality than AWQ. - The author concluded that FP8 is a dead end for 1.5B models on an L4. - The founder approved AWQ (compressed) for the Qwen2.5-1.5B model on the L4 GPU. - The AWQ deployment of Qwen2.5-1.5B on L4 passed the security review. - AWQ saves $1,880 per month, a 26% cost reduction for the Qwen2.5-1.5B deployment on L4, according to one input; another input reports $1,860 per month. - AWQ lowers quality by 3.4 points for Qwen2.5-1.5B on L4, according to one input; another input reports 3.3 points. - FP8 costs $640 per month more than AWQ for Qwen2.5-1.5B on L4 at matching quality.",
      "t_created": 1792529314029,
      "degree": 4,
-     "importance": 0.5680609671737329,
+     "importance": 0.5466025697329024,
      "source_task": null
     },
     {
      "id": "343b983d-9145-56d1-8e2a-f9f3735d48e2",
-     "name": "This area of the dataset is about: - Models: Qwen2.5-1.5B - Quantization: AWQ - Hardware: NVIDIA L4 GPU - Software: vLLM",
+     "name": "This area of the dataset is about: - Models: Qwen2.5-3B, Qwen2.5-1.5B, awq-3b, fp8-3b - Quantization: AWQ, fp8-3b - Hard",
      "type": "GlobalContextSummary",
      "entity_type": "GlobalContextSummary",
-     "text": "This area of the dataset is about: - Models: Qwen2.5-1.5B - Quantization: AWQ - Hardware: NVIDIA L4 GPU - Software: vLLM 0.32 - Topics: inference speed, cost savings, output quality tradeoffs. Facts: - Applying AWQ quantization to Qwen2.5-1.5B on an NVIDIA L4 GPU with vLLM 0.32 made inference 1.34x faster in one report and 1.35x faster in another. - At 200B tokens per month, AWQ quantization of Qwen2.5-1.5B on an NVIDIA L4 GPU with vLLM 0.32 saved 25% in one report and 26% in another. - AWQ quantization of Qwen2.5-1.5B on an NVIDIA L4 GPU with vLLM 0.32 lowered output quality by 3.3 points.",
-     "t_created": 1792529195186,
-     "degree": 3,
-     "importance": 0.489301084236452,
+     "text": "This area of the dataset is about:\n- Models: Qwen2.5-3B, Qwen2.5-1.5B, awq-3b, fp8-3b\n- Quantization: AWQ, fp8-3b\n- Hardware: NVIDIA L4 GPU\n- Systems: vLLM 0.32\n- Security: aiohttp 3.14.4\n- Roles: Founder\n- Topics: inference speed, cost savings, output quality\n\nFacts:\n- AWQ quantization of Qwen2.5-1.5B on an L4 GPU with vLLM 0.32 made it 1.34x to 1.35x faster than baseline across reported runs.\n- At 200B tokens per month, AWQ quantization of Qwen2.5-1.5B on an L4 GPU with vLLM 0.32 saved 25% to 26% in cost.\n- AWQ quantization of Qwen2.5-1.5B on an L4 GPU with vLLM 0.32 lowered quality by 3.3 points.\n- The awq-3b variant of Qwen2.5-3B on an L4 GPU with vLLM 0.32 was 1.54x faster than the baseline.\n- At 200B tokens per month, the awq-3b variant of Qwen2.5-3B saved 35.0% in cost on an L4 GPU with vLLM 0.32.\n- The awq-3b variant of Qwen2.5-3B showed a quality change of +0.0 points on an L4 GPU with vLLM 0.32, scoring 96.7% against a 96.7% baseline.\n- The Founder approved awq-3b for Qwen2.5-3B on L4.\n- The awq-3b approach saves $4,620 per month (35%) at 200B tokens per month and costs $0.0429 per 1M tokens.\n- The security check for awq-3b passed with aiohttp pinned to 3.14.4.\n- fp8-3b is a dead end for 3B models on L4 because it is slower at equal quality.",
+     "t_created": 1792532720447,
+     "degree": 5,
+     "importance": 0.6085232133882752,
      "source_task": null
     },
     {
      "id": "800882fd-a488-5418-87f3-a390a09e68c8",
-     "name": "This dataset is about: - Models: Qwen2.5-1.5B - Hardware: NVIDIA L4 GPU - Software: vLLM 0.32 - Quantization methods: AW",
+     "name": "This dataset is about: - Models: Qwen2.5-1.5B, Qwen2.5-3B - Hardware: NVIDIA L4 GPU - Quantization methods: AWQ, FP8 (fp",
      "type": "GlobalContextSummary",
      "entity_type": "GlobalContextSummary",
-     "text": "This dataset is about: - Models: Qwen2.5-1.5B - Hardware: NVIDIA L4 GPU - Software: vLLM 0.32 - Quantization methods: AWQ, FP8 - Roles: Founder - Concepts: inference speed, output quality, cost savings, security review. Facts: - AWQ quantization of Qwen2.5-1.5B on an NVIDIA L4 GPU with vLLM 0.32 made inference 1.34x to 1.35x faster. - AWQ quantization of Qwen2.5-1.5B on an NVIDIA L4 GPU with vLLM 0.32 lowered output quality by 3.3 to 3.4 points. - At 200B tokens per month, AWQ saved 25% to 26% on the Qwen2.5-1.5B deployment on the NVIDIA L4 GPU. - AWQ saves $1,860 to $1,880 per month, a 26% cost reduction, for the Qwen2.5-1.5B deployment on the L4. - FP8 quantization of Qwen2.5-1.5B on the L4 was slower than AWQ and gave no better output quality than AWQ. - FP8 costs $640 per month more than AWQ for Qwen2.5-1.5B on the L4 at matching quality. - The author concluded that FP8 is a dead end for 1.5B models on an L4. - The founder approved AWQ for the Qwen2.5-1.5B model on the L4 GPU, and the AWQ deployment passed the security review.",
-     "t_created": 1792529319399,
-     "degree": 2,
-     "importance": 0.3877619350384901,
+     "text": "This dataset is about: - Models: Qwen2.5-1.5B, Qwen2.5-3B - Hardware: NVIDIA L4 GPU - Quantization methods: AWQ, FP8 (fp8-3b, awq-3b) - Systems: vLLM 0.32 - Security: aiohttp 3.14.4 - Roles: Founder - Topics: inference speed, output quality, cost savings, security review Facts: - AWQ quantization of Qwen2.5-1.5B on an NVIDIA L4 GPU made inference 1.34x to 1.35x faster than baseline with vLLM 0.32. - AWQ quantization of Qwen2.5-1.5B on an NVIDIA L4 GPU lowered output quality by about 3.3 points, with one input reporting 3.4 points. - FP8 quantization of Qwen2.5-1.5B on an NVIDIA L4 GPU was slower than AWQ and gave no better output quality than AWQ. - The founder concluded that FP8 is a dead end for 1.5B models on an NVIDIA L4 GPU. - The founder approved AWQ for Qwen2.5-1.5B on the NVIDIA L4 GPU. - At 200B tokens per month, AWQ for Qwen2.5-1.5B on an NVIDIA L4 GPU reduced cost by 25% to 26%, reported as $1,860 to $1,880 per month. - FP8 for Qwen2.5-1.5B on an NVIDIA L4 GPU costs $640 per month more than AWQ at matching quality. - The AWQ deployment of Qwen2.5-1.5B on the NVIDIA L4 GPU passed the security review. - On Qwen2.5-3B running on an NVIDIA L4 GPU, the fp8-3b variant was slower than the awq-3b variant and gave no better output quality. - For 3B models on an NVIDIA L4 GPU, fp8-3b is a dead end because it is slower than awq-3b with no quality gain. - The awq-3b variant of Qwen2.5-3B on an NVIDIA L4 GPU with vLLM 0.32 was 1.54x faster than baseline. - The awq-3b variant of Qwen2.5-3B on an NVIDIA L4 GPU showed no quality change, scoring 96.7% against a 96.7% baseline. - At 200B tokens per month, the awq-3b variant of Qwen2.5-3B saved 35.0% in cost, or $4,620 per month, at $0.0429 per 1M tokens. - The founder approved awq-3b for Qwen2.5-3B on the NVIDIA L4 GPU. - The awq-3b variant of Qwen2.5-3B passed the security check with aiohttp pinned to 3.14.4.",
+     "t_created": 1792532726819,
+     "degree": 3,
+     "importance": 0.4708178267332765,
      "source_task": null
     },
     {
@@ -369,7 +369,7 @@
      "text": "This chunk is about a founder decision to use AWQ quantization for the Qwen2.5-1.5B model, including its cost savings and quality tradeoff.\n- Roles: Founder\n- Projects: Qwen2.5-1.5B AWQ deployment\n- Concepts: AWQ quantization, monthly cost savings, quality tradeoff\n- The founder approved using AWQ for Qwen2.5-1.5B.\n- The AWQ decision saves $1,860 per month.\n- The AWQ decision reduces quality by 3.3 points.",
      "t_created": 1792529255458,
      "degree": 2,
-     "importance": 0.3877619350384901,
+     "importance": 0.373114300021637,
      "source_task": "extract_graph_and_summarize"
     },
     {
@@ -380,7 +380,7 @@
      "text": "Founder decision: Founder approved awq for Qwen2.5-1.5B: saves $1,860/month with quality -3.3 points.",
      "t_created": 1792529253141,
      "degree": 6,
-     "importance": 0.686820903599663,
+     "importance": 0.6608763716360639,
      "source_task": "extract_chunks_from_documents"
     },
     {
@@ -391,8 +391,206 @@
      "text": null,
      "t_created": 1792529253133,
      "degree": 1,
-     "importance": 0.244650542118226,
+     "importance": 0.23540891336663824,
      "source_task": "classify_documents"
+    },
+    {
+     "id": "8c91696b-59e8-5aa9-9c7c-ddd4f63efb56",
+     "name": "This chunk is about: Models: Qwen2.5-3B, fp8-3b, awq-3b. Hardware: NVIDIA L4. Topics: quantization performance and quali",
+     "type": "TextSummary",
+     "entity_type": "TextSummary",
+     "text": "This chunk is about: Models: Qwen2.5-3B, fp8-3b, awq-3b. Hardware: NVIDIA L4. Topics: quantization performance and quality.\nFacts:\n- On Qwen2.5-3B running on an L4, the fp8-3b variant was slower than the awq-3b variant.\n- On Qwen2.5-3B running on an L4, the fp8-3b variant gave no better quality than the awq-3b variant.\n- For 3B models on an L4, fp8-3b is a dead end because it was slower than awq-3b with no quality gain.",
+     "t_created": 1792532289604,
+     "degree": 2,
+     "importance": 0.373114300021637,
+     "source_task": "extract_graph_and_summarize"
+    },
+    {
+     "id": "19cf9d7b-b2e6-5e93-b27a-9d62cfc6c969",
+     "name": "On Qwen2.5-3B on an L4, fp8-3b was slower than awq-3b with no better quality, so fp8-3b is a dead end for 3B models on L",
+     "type": "DocumentChunk",
+     "entity_type": "DocumentChunk",
+     "text": "On Qwen2.5-3B on an L4, fp8-3b was slower than awq-3b with no better quality, so fp8-3b is a dead end for 3B models on L4.",
+     "t_created": 1792532285288,
+     "degree": 6,
+     "importance": 0.6608763716360639,
+     "source_task": "extract_chunks_from_documents"
+    },
+    {
+     "id": "cb7cb7a5-e5ba-487e-ab96-250f38744a20",
+     "name": "text_b54c31670cd7136f243f16d01e5d72de",
+     "type": "TextDocument",
+     "entity_type": "TextDocument",
+     "text": null,
+     "t_created": 1792532285280,
+     "degree": 1,
+     "importance": 0.23540891336663824,
+     "source_task": "classify_documents"
+    },
+    {
+     "id": "be5eba31-c0b3-5a14-999a-6f7230818a16",
+     "name": "qwen2.5-3b",
+     "type": "Entity",
+     "entity_type": "model",
+     "text": null,
+     "t_created": 1792532683787,
+     "degree": 10,
+     "importance": 0.8143810382095967,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "name": "fp8-3b",
+     "type": "Entity",
+     "entity_type": "model",
+     "text": null,
+     "t_created": 1792532683787,
+     "degree": 11,
+     "importance": 0.8439321267549135,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "babfa493-3e6b-588d-81ca-0b6c587b0708",
+     "name": "quantization",
+     "type": "EntityType",
+     "entity_type": "EntityType",
+     "text": null,
+     "t_created": 1792532292200,
+     "degree": 2,
+     "importance": 0.373114300021637,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "name": "awq-3b",
+     "type": "Entity",
+     "entity_type": "quantization",
+     "text": null,
+     "t_created": 1792532683787,
+     "degree": 17,
+     "importance": 0.9816375134099121,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "07c9a301-2cb8-53bd-8205-82a2898fae7e",
+     "name": "This chunk is about benchmark results for the awq-3b variant of Qwen2.5-3B running on an L4 GPU with vLLM 0.32. This chu",
+     "type": "TextSummary",
+     "entity_type": "TextSummary",
+     "text": "This chunk is about benchmark results for the awq-3b variant of Qwen2.5-3B running on an L4 GPU with vLLM 0.32.\n\nThis chunk is about:\n- Models: Qwen2.5-3B, awq-3b\n- Systems: vLLM 0.32\n- Hardware: L4 GPU\n- Topics: Inference speed, cost savings, output quality\n\nFacts:\n- The awq-3b variant of Qwen2.5-3B was 1.54x faster than the baseline on the L4 GPU with vLLM 0.32.\n- At 200B tokens per month, the awq-3b variant of Qwen2.5-3B saved 35.0% in cost on the L4 GPU with vLLM 0.32.\n- The awq-3b variant of Qwen2.5-3B showed a quality change of +0.0 points on the L4 GPU with vLLM 0.32.",
+     "t_created": 1792532290652,
+     "degree": 2,
+     "importance": 0.373114300021637,
+     "source_task": "extract_graph_and_summarize"
+    },
+    {
+     "id": "ce2e9102-7f47-5a7e-baae-720b34863ada",
+     "name": "On Qwen2.5-3B on an L4 (vLLM 0.32), awq-3b was 1.54x faster and saved 35.0% at 200B tokens/month, quality +0.0 points.",
+     "type": "DocumentChunk",
+     "entity_type": "DocumentChunk",
+     "text": "On Qwen2.5-3B on an L4 (vLLM 0.32), awq-3b was 1.54x faster and saved 35.0% at 200B tokens/month, quality +0.0 points.",
+     "t_created": 1792532285242,
+     "degree": 6,
+     "importance": 0.6608763716360639,
+     "source_task": "extract_chunks_from_documents"
+    },
+    {
+     "id": "d06ae215-d577-4c56-a723-8acfb4359bca",
+     "name": "text_2f69e87c384bad45d6a6abc14965edf8",
+     "type": "TextDocument",
+     "entity_type": "TextDocument",
+     "text": null,
+     "t_created": 1792532285234,
+     "degree": 1,
+     "importance": 0.23540891336663824,
+     "source_task": "classify_documents"
+    },
+    {
+     "id": "45970ba4-eafd-5af2-a792-63eb4268837a",
+     "name": "This chunk is about: - Decisions: Founder approval of awq-3b - Models: Qwen2.5-3B, fp8-3b - Hardware: L4 - Security: aio",
+     "type": "TextSummary",
+     "entity_type": "TextSummary",
+     "text": "This chunk is about: - Decisions: Founder approval of awq-3b - Models: Qwen2.5-3B, fp8-3b - Hardware: L4 - Security: aiohttp 3.14.4 - Roles: Founder. Facts: - The Founder approved awq-3b for Qwen2.5-3B on L4. - The awq-3b approach saves $4,620 per month (35%) at 200B tokens per month. - The awq-3b approach scores 96.7% quality, the same as the 96.7% baseline, so it loses 0 points. - The awq-3b approach runs 1.54x faster than the baseline. - The awq-3b approach costs $0.0429 per 1M tokens. - The security check for awq-3b passed with aiohttp pinned to 3.14.4. - fp8-3b is a dead end for 3B models on L4 because it is slower at equal quality.",
+     "t_created": 1792532680698,
+     "degree": 2,
+     "importance": 0.373114300021637,
+     "source_task": "extract_graph_and_summarize"
+    },
+    {
+     "id": "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+     "name": "Founder decision: Founder approved awq-3b for Qwen2.5-3B on L4: saves $4,620/month (35%) at 200B tokens/month, quality 0",
+     "type": "DocumentChunk",
+     "entity_type": "DocumentChunk",
+     "text": "Founder decision: Founder approved awq-3b for Qwen2.5-3B on L4: saves $4,620/month (35%) at 200B tokens/month, quality 0 points lost (96.7% vs 96.7% baseline), 1.54x faster, $0.0429/1M tokens. Security PASS (aiohttp pinned 3.14.4). fp8-3b is a 3B/L4 dead end (slower at equal quality).",
+     "t_created": 1792532675123,
+     "degree": 9,
+     "importance": 0.7820114830995408,
+     "source_task": "extract_chunks_from_documents"
+    },
+    {
+     "id": "2d62ed09-ce30-4fcb-8dbd-d85317996c3e",
+     "name": "text_02688743553b0d10e6dee47296cfc888",
+     "type": "TextDocument",
+     "entity_type": "TextDocument",
+     "text": null,
+     "t_created": 1792532675114,
+     "degree": 1,
+     "importance": 0.23540891336663824,
+     "source_task": "classify_documents"
+    },
+    {
+     "id": "a0c47847-b0ad-5099-afbe-0989e2e92940",
+     "name": "aiohttp",
+     "type": "Entity",
+     "entity_type": "library",
+     "text": null,
+     "t_created": 1792532683787,
+     "degree": 3,
+     "importance": 0.4708178267332765,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "6ad28e34-e2e8-53f1-a01c-864d40db2a78",
+     "name": "library",
+     "type": "EntityType",
+     "entity_type": "EntityType",
+     "text": null,
+     "t_created": 1792532683787,
+     "degree": 1,
+     "importance": 0.23540891336663824,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "de0d6332-f2f0-5d65-a693-61897e79294d",
+     "name": "security check",
+     "type": "Entity",
+     "entity_type": "assessment",
+     "text": null,
+     "t_created": 1792532683787,
+     "degree": 3,
+     "importance": 0.4708178267332765,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "35179ccf-0e4f-5133-851b-8d9faeba6b5a",
+     "name": "assessment",
+     "type": "EntityType",
+     "entity_type": "EntityType",
+     "text": null,
+     "t_created": 1792532683787,
+     "degree": 1,
+     "importance": 0.23540891336663824,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "0497a8f1-0f8d-53ce-832d-f2d8307702a5",
+     "name": "This area of the dataset is about: - Models: Qwen2.5-3B, fp8-3b, awq-3b - Hardware: NVIDIA L4 - Topics: quantization per",
+     "type": "GlobalContextSummary",
+     "entity_type": "GlobalContextSummary",
+     "text": "This area of the dataset is about:\n- Models: Qwen2.5-3B, fp8-3b, awq-3b\n- Hardware: NVIDIA L4\n- Topics: quantization performance and quality\nFacts:\n- On Qwen2.5-3B running on an NVIDIA L4, the fp8-3b variant was slower than the awq-3b variant.\n- On Qwen2.5-3B running on an NVIDIA L4, the fp8-3b variant gave no better quality than the awq-3b variant.\n- For 3B models on an NVIDIA L4, fp8-3b is a dead end because it was slower than awq-3b with no quality gain.",
+     "t_created": 1792532715265,
+     "degree": 2,
+     "importance": 0.373114300021637,
+     "source_task": null
     }
    ],
    "links": [
@@ -657,6 +855,11 @@
      "relation": "approved"
     },
     {
+     "source": "26d9fe40-7e5c-530c-8322-5a08a9b8be7d",
+     "target": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "relation": "approved"
+    },
+    {
      "source": "89c630cf-b272-5aaf-81e3-64579fdd03a5",
      "target": "214abcd9-9adf-5c8a-bb35-1e729f2d68c3",
      "relation": "is_a"
@@ -735,12 +938,257 @@
      "source": "9f555aad-fe3c-5ca6-abd7-02e246831fe9",
      "target": "65198407-5b70-58c0-bf5f-f1eac834217f",
      "relation": "contains"
+    },
+    {
+     "source": "8c91696b-59e8-5aa9-9c7c-ddd4f63efb56",
+     "target": "19cf9d7b-b2e6-5e93-b27a-9d62cfc6c969",
+     "relation": "made_from"
+    },
+    {
+     "source": "8c91696b-59e8-5aa9-9c7c-ddd4f63efb56",
+     "target": "0497a8f1-0f8d-53ce-832d-f2d8307702a5",
+     "relation": "summarized_in"
+    },
+    {
+     "source": "19cf9d7b-b2e6-5e93-b27a-9d62cfc6c969",
+     "target": "cb7cb7a5-e5ba-487e-ab96-250f38744a20",
+     "relation": "is_part_of"
+    },
+    {
+     "source": "19cf9d7b-b2e6-5e93-b27a-9d62cfc6c969",
+     "target": "be5eba31-c0b3-5a14-999a-6f7230818a16",
+     "relation": "contains"
+    },
+    {
+     "source": "19cf9d7b-b2e6-5e93-b27a-9d62cfc6c969",
+     "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5",
+     "relation": "contains"
+    },
+    {
+     "source": "19cf9d7b-b2e6-5e93-b27a-9d62cfc6c969",
+     "target": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "relation": "contains"
+    },
+    {
+     "source": "19cf9d7b-b2e6-5e93-b27a-9d62cfc6c969",
+     "target": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "relation": "contains"
+    },
+    {
+     "source": "be5eba31-c0b3-5a14-999a-6f7230818a16",
+     "target": "219b163a-c39b-5565-a57c-a39a9b7c95ef",
+     "relation": "is_a"
+    },
+    {
+     "source": "be5eba31-c0b3-5a14-999a-6f7230818a16",
+     "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5",
+     "relation": "evaluated_on"
+    },
+    {
+     "source": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "target": "babfa493-3e6b-588d-81ca-0b6c587b0708",
+     "relation": "is_a"
+    },
+    {
+     "source": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "target": "be5eba31-c0b3-5a14-999a-6f7230818a16",
+     "relation": "tested_on"
+    },
+    {
+     "source": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5",
+     "relation": "tested_on"
+    },
+    {
+     "source": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "target": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "relation": "slower_than"
+    },
+    {
+     "source": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "target": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "relation": "no_better_quality_than"
+    },
+    {
+     "source": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5",
+     "relation": "dead_end_for"
+    },
+    {
+     "source": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "target": "219b163a-c39b-5565-a57c-a39a9b7c95ef",
+     "relation": "is_a"
+    },
+    {
+     "source": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "target": "be5eba31-c0b3-5a14-999a-6f7230818a16",
+     "relation": "variant_of"
+    },
+    {
+     "source": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5",
+     "relation": "runs_on"
+    },
+    {
+     "source": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "target": "219b163a-c39b-5565-a57c-a39a9b7c95ef",
+     "relation": "is_a"
+    },
+    {
+     "source": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "target": "be5eba31-c0b3-5a14-999a-6f7230818a16",
+     "relation": "compared_to"
+    },
+    {
+     "source": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5",
+     "relation": "evaluated_on"
+    },
+    {
+     "source": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "target": "5dc0b1a6-a5b6-5e1e-9eb5-da109fed275a",
+     "relation": "evaluated_with"
+    },
+    {
+     "source": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "target": "babfa493-3e6b-588d-81ca-0b6c587b0708",
+     "relation": "is_a"
+    },
+    {
+     "source": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "target": "be5eba31-c0b3-5a14-999a-6f7230818a16",
+     "relation": "tested_on"
+    },
+    {
+     "source": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5",
+     "relation": "tested_on"
+    },
+    {
+     "source": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "target": "be5eba31-c0b3-5a14-999a-6f7230818a16",
+     "relation": "variant_of"
+    },
+    {
+     "source": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5",
+     "relation": "runs_on"
+    },
+    {
+     "source": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "target": "a0c47847-b0ad-5099-afbe-0989e2e92940",
+     "relation": "pinned_to"
+    },
+    {
+     "source": "07c9a301-2cb8-53bd-8205-82a2898fae7e",
+     "target": "ce2e9102-7f47-5a7e-baae-720b34863ada",
+     "relation": "made_from"
+    },
+    {
+     "source": "07c9a301-2cb8-53bd-8205-82a2898fae7e",
+     "target": "343b983d-9145-56d1-8e2a-f9f3735d48e2",
+     "relation": "summarized_in"
+    },
+    {
+     "source": "ce2e9102-7f47-5a7e-baae-720b34863ada",
+     "target": "d06ae215-d577-4c56-a723-8acfb4359bca",
+     "relation": "is_part_of"
+    },
+    {
+     "source": "ce2e9102-7f47-5a7e-baae-720b34863ada",
+     "target": "be5eba31-c0b3-5a14-999a-6f7230818a16",
+     "relation": "contains"
+    },
+    {
+     "source": "ce2e9102-7f47-5a7e-baae-720b34863ada",
+     "target": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "relation": "contains"
+    },
+    {
+     "source": "ce2e9102-7f47-5a7e-baae-720b34863ada",
+     "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5",
+     "relation": "contains"
+    },
+    {
+     "source": "ce2e9102-7f47-5a7e-baae-720b34863ada",
+     "target": "5dc0b1a6-a5b6-5e1e-9eb5-da109fed275a",
+     "relation": "contains"
+    },
+    {
+     "source": "45970ba4-eafd-5af2-a792-63eb4268837a",
+     "target": "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+     "relation": "made_from"
+    },
+    {
+     "source": "45970ba4-eafd-5af2-a792-63eb4268837a",
+     "target": "343b983d-9145-56d1-8e2a-f9f3735d48e2",
+     "relation": "summarized_in"
+    },
+    {
+     "source": "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+     "target": "2d62ed09-ce30-4fcb-8dbd-d85317996c3e",
+     "relation": "is_part_of"
+    },
+    {
+     "source": "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+     "target": "26d9fe40-7e5c-530c-8322-5a08a9b8be7d",
+     "relation": "contains"
+    },
+    {
+     "source": "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+     "target": "be5eba31-c0b3-5a14-999a-6f7230818a16",
+     "relation": "contains"
+    },
+    {
+     "source": "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+     "target": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "relation": "contains"
+    },
+    {
+     "source": "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+     "target": "5d3a7b5d-a061-5c08-b6b6-f6ca17864e06",
+     "relation": "contains"
+    },
+    {
+     "source": "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+     "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5",
+     "relation": "contains"
+    },
+    {
+     "source": "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+     "target": "a0c47847-b0ad-5099-afbe-0989e2e92940",
+     "relation": "contains"
+    },
+    {
+     "source": "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+     "target": "de0d6332-f2f0-5d65-a693-61897e79294d",
+     "relation": "contains"
+    },
+    {
+     "source": "a0c47847-b0ad-5099-afbe-0989e2e92940",
+     "target": "6ad28e34-e2e8-53f1-a01c-864d40db2a78",
+     "relation": "is_a"
+    },
+    {
+     "source": "de0d6332-f2f0-5d65-a693-61897e79294d",
+     "target": "35179ccf-0e4f-5133-851b-8d9faeba6b5a",
+     "relation": "is_a"
+    },
+    {
+     "source": "de0d6332-f2f0-5d65-a693-61897e79294d",
+     "target": "50f1e574-04ee-57f9-8eb1-227530efaf13",
+     "relation": "assesses"
+    },
+    {
+     "source": "0497a8f1-0f8d-53ce-832d-f2d8307702a5",
+     "target": "800882fd-a488-5418-87f3-a390a09e68c8",
+     "relation": "summarized_in"
     }
    ],
    "inventory": [
     {
      "type": "DocumentChunk",
-     "count": 5,
+     "count": 8,
      "samples": [
       "",
       "",
@@ -750,24 +1198,29 @@
      ],
      "relationships": [
       {
+       "to_type": "model",
+       "relation": "contains",
+       "count": 10
+      },
+      {
+       "to_type": "TextDocument",
+       "relation": "is_part_of",
+       "count": 8
+      },
+      {
+       "to_type": "TextSummary",
+       "relation": "\u2190 made_from",
+       "count": 8
+      },
+      {
        "to_type": "concept",
        "relation": "contains",
        "count": 8
       },
       {
-       "to_type": "TextDocument",
-       "relation": "is_part_of",
-       "count": 5
-      },
-      {
-       "to_type": "TextSummary",
-       "relation": "\u2190 made_from",
-       "count": 5
-      },
-      {
-       "to_type": "model",
+       "to_type": "hardware",
        "relation": "contains",
-       "count": 5
+       "count": 7
       },
       {
        "to_type": "FactConflict",
@@ -775,22 +1228,32 @@
        "count": 4
       },
       {
-       "to_type": "hardware",
-       "relation": "contains",
-       "count": 4
-      },
-      {
        "to_type": "person",
        "relation": "contains",
-       "count": 2
+       "count": 3
+      },
+      {
+       "to_type": "quantization",
+       "relation": "contains",
+       "count": 3
       },
       {
        "to_type": "software",
        "relation": "contains",
-       "count": 2
+       "count": 3
+      },
+      {
+       "to_type": "assessment",
+       "relation": "contains",
+       "count": 1
       },
       {
        "to_type": "event",
+       "relation": "contains",
+       "count": 1
+      },
+      {
+       "to_type": "library",
        "relation": "contains",
        "count": 1
       }
@@ -798,25 +1261,25 @@
     },
     {
      "type": "TextDocument",
-     "count": 5,
+     "count": 8,
      "samples": [
+      "text_02688743553b0d10e6dee47296cfc888",
+      "text_2f69e87c384bad45d6a6abc14965edf8",
       "text_5996adb94d428cf09501bffe50123126",
       "text_9c221fe22637481ec4d639fedb7230f3",
-      "text_c3099b8dd53c21786b7d662426d10697",
-      "text_e10455038b8fda5a2fef910ed31c6795",
-      "text_fb4c2460cb6e97666c3a4b6d894fbd95"
+      "text_b54c31670cd7136f243f16d01e5d72de"
      ],
      "relationships": [
       {
        "to_type": "DocumentChunk",
        "relation": "\u2190 is_part_of",
-       "count": 5
+       "count": 8
       }
      ]
     },
     {
      "type": "TextSummary",
-     "count": 5,
+     "count": 8,
      "samples": [
       "",
       "",
@@ -828,19 +1291,20 @@
       {
        "to_type": "DocumentChunk",
        "relation": "made_from",
-       "count": 5
+       "count": 8
       },
       {
        "to_type": "GlobalContextSummary",
        "relation": "summarized_in",
-       "count": 5
+       "count": 8
       }
      ]
     },
     {
      "type": "GlobalContextSummary",
-     "count": 3,
+     "count": 4,
      "samples": [
+      "",
       "",
       "",
       ""
@@ -849,17 +1313,17 @@
       {
        "to_type": "TextSummary",
        "relation": "\u2190 summarized_in",
-       "count": 5
+       "count": 8
       },
       {
        "to_type": "GlobalContextSummary",
        "relation": "summarized_in",
-       "count": 2
+       "count": 3
       },
       {
        "to_type": "GlobalContextSummary",
        "relation": "\u2190 summarized_in",
-       "count": 2
+       "count": 3
       }
      ]
     },
@@ -945,6 +1409,112 @@
      ]
     },
     {
+     "type": "model",
+     "count": 3,
+     "samples": [
+      "qwen2.5-1.5b",
+      "fp8-3b",
+      "qwen2.5-3b"
+     ],
+     "relationships": [
+      {
+       "to_type": "DocumentChunk",
+       "relation": "\u2190 contains",
+       "count": 10
+      },
+      {
+       "to_type": "hardware",
+       "relation": "evaluated_on",
+       "count": 2
+      },
+      {
+       "to_type": "hardware",
+       "relation": "runs_on",
+       "count": 2
+      },
+      {
+       "to_type": "FactConflict",
+       "relation": "\u2190 conflict_value",
+       "count": 1
+      },
+      {
+       "to_type": "concept",
+       "relation": "\u2190 applied_to",
+       "count": 1
+      },
+      {
+       "to_type": "concept",
+       "relation": "\u2190 evaluated_on",
+       "count": 1
+      },
+      {
+       "to_type": "hardware",
+       "relation": "dead_end_for",
+       "count": 1
+      },
+      {
+       "to_type": "hardware",
+       "relation": "deployed_on",
+       "count": 1
+      },
+      {
+       "to_type": "hardware",
+       "relation": "tested_on",
+       "count": 1
+      },
+      {
+       "to_type": "model",
+       "relation": "tested_on",
+       "count": 1
+      },
+      {
+       "to_type": "model",
+       "relation": "variant_of",
+       "count": 1
+      },
+      {
+       "to_type": "model",
+       "relation": "\u2190 tested_on",
+       "count": 1
+      },
+      {
+       "to_type": "model",
+       "relation": "\u2190 variant_of",
+       "count": 1
+      },
+      {
+       "to_type": "quantization",
+       "relation": "no_better_quality_than",
+       "count": 1
+      },
+      {
+       "to_type": "quantization",
+       "relation": "slower_than",
+       "count": 1
+      },
+      {
+       "to_type": "quantization",
+       "relation": "\u2190 compared_to",
+       "count": 1
+      },
+      {
+       "to_type": "quantization",
+       "relation": "\u2190 tested_on",
+       "count": 1
+      },
+      {
+       "to_type": "quantization",
+       "relation": "\u2190 variant_of",
+       "count": 1
+      },
+      {
+       "to_type": "software",
+       "relation": "served_with",
+       "count": 1
+      }
+     ]
+    },
+    {
      "type": "FactConflict",
      "count": 1,
      "samples": [
@@ -964,6 +1534,25 @@
       {
        "to_type": "model",
        "relation": "conflict_value",
+       "count": 1
+      }
+     ]
+    },
+    {
+     "type": "assessment",
+     "count": 1,
+     "samples": [
+      "security check"
+     ],
+     "relationships": [
+      {
+       "to_type": "DocumentChunk",
+       "relation": "\u2190 contains",
+       "count": 1
+      },
+      {
+       "to_type": "quantization",
+       "relation": "assesses",
        "count": 1
       }
      ]
@@ -997,7 +1586,22 @@
       {
        "to_type": "DocumentChunk",
        "relation": "\u2190 contains",
-       "count": 4
+       "count": 7
+      },
+      {
+       "to_type": "model",
+       "relation": "\u2190 evaluated_on",
+       "count": 2
+      },
+      {
+       "to_type": "model",
+       "relation": "\u2190 runs_on",
+       "count": 2
+      },
+      {
+       "to_type": "model",
+       "relation": "\u2190 dead_end_for",
+       "count": 1
       },
       {
        "to_type": "model",
@@ -1006,61 +1610,41 @@
       },
       {
        "to_type": "model",
+       "relation": "\u2190 tested_on",
+       "count": 1
+      },
+      {
+       "to_type": "quantization",
        "relation": "\u2190 evaluated_on",
        "count": 1
       },
       {
-       "to_type": "model",
+       "to_type": "quantization",
        "relation": "\u2190 runs_on",
+       "count": 1
+      },
+      {
+       "to_type": "quantization",
+       "relation": "\u2190 tested_on",
        "count": 1
       }
      ]
     },
     {
-     "type": "model",
+     "type": "library",
      "count": 1,
      "samples": [
-      "qwen2.5-1.5b"
+      "aiohttp"
      ],
      "relationships": [
       {
        "to_type": "DocumentChunk",
        "relation": "\u2190 contains",
-       "count": 5
-      },
-      {
-       "to_type": "FactConflict",
-       "relation": "\u2190 conflict_value",
        "count": 1
       },
       {
-       "to_type": "concept",
-       "relation": "\u2190 applied_to",
-       "count": 1
-      },
-      {
-       "to_type": "concept",
-       "relation": "\u2190 evaluated_on",
-       "count": 1
-      },
-      {
-       "to_type": "hardware",
-       "relation": "deployed_on",
-       "count": 1
-      },
-      {
-       "to_type": "hardware",
-       "relation": "evaluated_on",
-       "count": 1
-      },
-      {
-       "to_type": "hardware",
-       "relation": "runs_on",
-       "count": 1
-      },
-      {
-       "to_type": "software",
-       "relation": "served_with",
+       "to_type": "quantization",
+       "relation": "\u2190 pinned_to",
        "count": 1
       }
      ]
@@ -1075,11 +1659,90 @@
       {
        "to_type": "DocumentChunk",
        "relation": "\u2190 contains",
-       "count": 2
+       "count": 3
       },
       {
        "to_type": "concept",
        "relation": "approved",
+       "count": 1
+      },
+      {
+       "to_type": "quantization",
+       "relation": "approved",
+       "count": 1
+      }
+     ]
+    },
+    {
+     "type": "quantization",
+     "count": 1,
+     "samples": [
+      "awq-3b"
+     ],
+     "relationships": [
+      {
+       "to_type": "DocumentChunk",
+       "relation": "\u2190 contains",
+       "count": 3
+      },
+      {
+       "to_type": "assessment",
+       "relation": "\u2190 assesses",
+       "count": 1
+      },
+      {
+       "to_type": "hardware",
+       "relation": "evaluated_on",
+       "count": 1
+      },
+      {
+       "to_type": "hardware",
+       "relation": "runs_on",
+       "count": 1
+      },
+      {
+       "to_type": "hardware",
+       "relation": "tested_on",
+       "count": 1
+      },
+      {
+       "to_type": "library",
+       "relation": "pinned_to",
+       "count": 1
+      },
+      {
+       "to_type": "model",
+       "relation": "compared_to",
+       "count": 1
+      },
+      {
+       "to_type": "model",
+       "relation": "tested_on",
+       "count": 1
+      },
+      {
+       "to_type": "model",
+       "relation": "variant_of",
+       "count": 1
+      },
+      {
+       "to_type": "model",
+       "relation": "\u2190 no_better_quality_than",
+       "count": 1
+      },
+      {
+       "to_type": "model",
+       "relation": "\u2190 slower_than",
+       "count": 1
+      },
+      {
+       "to_type": "person",
+       "relation": "\u2190 approved",
+       "count": 1
+      },
+      {
+       "to_type": "software",
+       "relation": "evaluated_with",
        "count": 1
       }
      ]
@@ -1094,11 +1757,16 @@
       {
        "to_type": "DocumentChunk",
        "relation": "\u2190 contains",
-       "count": 2
+       "count": 3
       },
       {
        "to_type": "model",
        "relation": "\u2190 served_with",
+       "count": 1
+      },
+      {
+       "to_type": "quantization",
+       "relation": "\u2190 evaluated_with",
        "count": 1
       }
      ]
@@ -1107,45 +1775,49 @@
    "questions": [
     {
      "question": "Which compressed model options are dead ends on an L4?",
-     "answer": "FP8 is the dead end for Qwen2.5-1.5B on an L4: it was slower than AWQ with no better quality.",
+     "answer": "**FP8 variants are dead ends on L4:** FP8 for Qwen2.5-1.5B (slower than AWQ with no better quality) and fp8-3b for Qwen2.5-3B (slower than awq-3b at equal quality).",
      "node_ids": [
       "d268061f-c7f8-596d-ad58-f9ab8bf56e2b",
       "b0bef52d-eed1-546d-bfa5-cbfec2af84e2",
-      "a7560caa-65ac-5904-b6a1-8374e4e51cae",
-      "0407a714-e3c6-5419-bb2d-c643fa07f12d",
-      "d2a381fa-3658-5ca6-ada9-2109cfc9331d",
       "b2454c76-2d4c-5be6-bd17-a68d2e802df7",
-      "d61a0a4e-0680-50cb-8c25-d0efe35f2f58"
+      "a7560caa-65ac-5904-b6a1-8374e4e51cae",
+      "d2a381fa-3658-5ca6-ada9-2109cfc9331d",
+      "d61a0a4e-0680-50cb-8c25-d0efe35f2f58",
+      "0407a714-e3c6-5419-bb2d-c643fa07f12d"
      ]
     },
     {
      "question": "What quality loss does the founder accept?",
-     "answer": "The founder accepts a quality loss of **3.3 points** (one source says 3.4) from using AWQ on Qwen2.5-1.5B on L4.",
+     "answer": "The founder accepts a quality loss of **3.3 points** for AWQ on Qwen2.5-1.5B on L4. One source gives 3.4 points, and the context flags this as a conflict. For the awq-3b variant on Qwen2.5-3B, the founder accepts **no quality loss** (0 points).",
      "node_ids": [
       "26d9fe40-7e5c-530c-8322-5a08a9b8be7d",
       "9f555aad-fe3c-5ca6-abd7-02e246831fe9",
-      "ba8d1251-9d5d-598c-8de3-076a13987f42",
-      "aa0ee606-75d0-5628-b5bb-0a596e899c46",
-      "99a82eec-bb35-5bb5-9ed2-e73fc7a756de",
-      "d61a0a4e-0680-50cb-8c25-d0efe35f2f58",
       "27dca2a8-be48-5b84-9278-c53ebf113a7b",
+      "65198407-5b70-58c0-bf5f-f1eac834217f",
+      "aa0ee606-75d0-5628-b5bb-0a596e899c46",
       "72e1896c-6581-4981-9f2f-2e715d8eefa9",
-      "65198407-5b70-58c0-bf5f-f1eac834217f"
+      "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+      "50f1e574-04ee-57f9-8eb1-227530efaf13",
+      "ba8d1251-9d5d-598c-8de3-076a13987f42",
+      "99a82eec-bb35-5bb5-9ed2-e73fc7a756de",
+      "d61a0a4e-0680-50cb-8c25-d0efe35f2f58"
      ]
     },
     {
      "question": "Which setup saved the most money, and by how much?",
-     "answer": "AWQ on Qwen2.5-1.5B on an L4 saved the most, about **$1,880/month (26%)**, per the founder decision. Other sources give $1,860/month, so the exact figure is disputed.",
+     "answer": "The **awq-3b** setup (Qwen2.5-3B on L4) saved the most, at **$4,620/month (35%)**, with no quality loss.",
      "node_ids": [
       "26d9fe40-7e5c-530c-8322-5a08a9b8be7d",
       "9f555aad-fe3c-5ca6-abd7-02e246831fe9",
-      "ba8d1251-9d5d-598c-8de3-076a13987f42",
-      "aa0ee606-75d0-5628-b5bb-0a596e899c46",
-      "99a82eec-bb35-5bb5-9ed2-e73fc7a756de",
-      "d61a0a4e-0680-50cb-8c25-d0efe35f2f58",
       "27dca2a8-be48-5b84-9278-c53ebf113a7b",
+      "65198407-5b70-58c0-bf5f-f1eac834217f",
+      "aa0ee606-75d0-5628-b5bb-0a596e899c46",
       "72e1896c-6581-4981-9f2f-2e715d8eefa9",
-      "65198407-5b70-58c0-bf5f-f1eac834217f"
+      "fc63602c-e1e6-516e-bb00-e48addb2f92f",
+      "50f1e574-04ee-57f9-8eb1-227530efaf13",
+      "ba8d1251-9d5d-598c-8de3-076a13987f42",
+      "99a82eec-bb35-5bb5-9ed2-e73fc7a756de",
+      "d61a0a4e-0680-50cb-8c25-d0efe35f2f58"
      ]
     }
    ]
@@ -1160,7 +1832,7 @@
      "text": "This chunk is about: Companies: Snyk; Systems: serving stack; Products: aiohttp; Security: vulnerabilities, CVE-2025-53643, HTTP Request Smuggling; Topics: dependency pinning policy. Facts: - Snyk blocked aiohttp 3.9.1 in the serving stack. - Snyk reported 16 high and 27 medium severity issues in aiohttp 3.9.1. - aiohttp 3.9.1 has an HTTP Request Smuggling issue tracked as CVE-2025-53643. - The aiohttp CVE-2025-53643 issue is fixed in aiohttp 3.14.4. - The policy for the serving stack is to always pin aiohttp>=3.14.4 from the start. - The policy for the serving stack is to never use aiohttp 3.9.1.",
      "t_created": 1792528896528,
      "degree": 2,
-     "importance": 0.5,
+     "importance": 0.42831734103139474,
      "source_task": "extract_graph_and_summarize"
     },
     {
@@ -1171,7 +1843,7 @@
      "text": "Snyk blocked aiohttp 3.9.1 in the serving stack: 16 high, 27 medium severity issues, for example HTTP Request Smuggling (CVE-2025-53643). Fixed in aiohttp 3.14.4. Always pin aiohttp>=3.14.4 from the start and never use 3.9.1.",
      "t_created": 1792528892689,
      "degree": 8,
-     "importance": 1.0,
+     "importance": 0.8566346820627895,
      "source_task": "extract_chunks_from_documents"
     },
     {
@@ -1182,7 +1854,7 @@
      "text": null,
      "t_created": 1792528892680,
      "degree": 1,
-     "importance": 0.3154648767857287,
+     "importance": 0.27023815442731974,
      "source_task": "classify_documents"
     },
     {
@@ -1191,9 +1863,9 @@
      "type": "Entity",
      "entity_type": "organization",
      "text": null,
-     "t_created": 1792528899685,
-     "degree": 4,
-     "importance": 0.7324867603589634,
+     "t_created": 1792532492881,
+     "degree": 8,
+     "importance": 0.8566346820627895,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -1202,9 +1874,9 @@
      "type": "EntityType",
      "entity_type": "EntityType",
      "text": null,
-     "t_created": 1792528899685,
+     "t_created": 1792532492881,
      "degree": 1,
-     "importance": 0.3154648767857287,
+     "importance": 0.27023815442731974,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -1215,7 +1887,7 @@
      "text": null,
      "t_created": 1792528899685,
      "degree": 5,
-     "importance": 0.8154648767857287,
+     "importance": 0.6985554954587144,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -1226,7 +1898,7 @@
      "text": null,
      "t_created": 1792528899685,
      "degree": 2,
-     "importance": 0.5,
+     "importance": 0.42831734103139474,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -1237,7 +1909,7 @@
      "text": null,
      "t_created": 1792528899685,
      "degree": 5,
-     "importance": 0.8154648767857287,
+     "importance": 0.6985554954587144,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -1248,7 +1920,7 @@
      "text": null,
      "t_created": 1792528899685,
      "degree": 1,
-     "importance": 0.3154648767857287,
+     "importance": 0.27023815442731974,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -1259,7 +1931,7 @@
      "text": null,
      "t_created": 1792528899685,
      "degree": 3,
-     "importance": 0.6309297535714574,
+     "importance": 0.5404763088546395,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -1270,7 +1942,7 @@
      "text": null,
      "t_created": 1792528899685,
      "degree": 1,
-     "importance": 0.3154648767857287,
+     "importance": 0.27023815442731974,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -1281,7 +1953,7 @@
      "text": null,
      "t_created": 1792528899685,
      "degree": 4,
-     "importance": 0.7324867603589634,
+     "importance": 0.6274735630753033,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -1292,7 +1964,7 @@
      "text": null,
      "t_created": 1792528899685,
      "degree": 1,
-     "importance": 0.3154648767857287,
+     "importance": 0.27023815442731974,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -1303,7 +1975,7 @@
      "text": null,
      "t_created": 1792528899685,
      "degree": 5,
-     "importance": 0.8154648767857287,
+     "importance": 0.6985554954587144,
      "source_task": "extract_graph_from_data"
     },
     {
@@ -1311,21 +1983,197 @@
      "name": "This area of the dataset is about: - Companies: Snyk - Systems: serving stack - Products: aiohttp - Security: CVE-2025-5",
      "type": "GlobalContextSummary",
      "entity_type": "GlobalContextSummary",
-     "text": "This area of the dataset is about:\n- Companies: Snyk\n- Systems: serving stack\n- Products: aiohttp\n- Security: CVE-2025-53643, HTTP Request Smuggling\n- Topics: dependency pinning policy\n\nFacts:\n- Snyk reported 16 high and 27 medium severity issues in aiohttp 3.9.1.\n- Snyk blocked aiohttp 3.9.1 in the serving stack.\n- aiohttp 3.9.1 has an HTTP Request Smuggling issue tracked as CVE-2025-53643.\n- The CVE-2025-53643 issue in aiohttp is fixed in aiohttp 3.14.4.\n- The serving stack policy is to always pin aiohttp>=3.14.4 from the start and never use aiohttp 3.9.1.",
-     "t_created": 1792529223119,
+     "text": "This area of the dataset is about:\n- Companies: Snyk\n- Systems: serving stack\n- Products: aiohttp\n- Security: CVE-2025-53643, HTTP Request Smuggling\n- Topics: dependency pinning policy\n\nFacts:\n- Snyk blocked aiohttp 3.9.1 in the serving stack.\n- Snyk reported 16 high and 27 medium severity issues in aiohttp 3.9.1.\n- aiohttp 3.9.1 has an HTTP Request Smuggling issue tracked as CVE-2025-53643.\n- The CVE-2025-53643 HTTP Request Smuggling issue in aiohttp is fixed in aiohttp 3.14.4.\n- The serving stack policy is to always pin aiohttp>=3.14.4 from the start.\n- The serving stack policy is to never use aiohttp 3.9.1.",
+     "t_created": 1792532749572,
      "degree": 2,
-     "importance": 0.5,
+     "importance": 0.42831734103139474,
      "source_task": null
     },
     {
      "id": "567008f0-9602-5ca9-9a44-c1974064cded",
-     "name": "This dataset is about: - Companies: Snyk - Systems: serving stack - Products: aiohttp - Security: CVE-2025-53643, HTTP R",
+     "name": "This dataset is about: - Companies: Snyk - Systems: serving stack, vLLM 0.32.0 serving image - Products: aiohttp, transf",
      "type": "GlobalContextSummary",
      "entity_type": "GlobalContextSummary",
-     "text": "This dataset is about:\n- Companies: Snyk\n- Systems: serving stack\n- Products: aiohttp\n- Security: CVE-2025-53643, HTTP Request Smuggling\n- Topics: dependency pinning policy\n\nFacts:\n- Snyk reported 16 high and 27 medium severity issues in aiohttp 3.9.1.\n- aiohttp 3.9.1 has an HTTP Request Smuggling issue tracked as CVE-2025-53643.\n- The CVE-2025-53643 issue in aiohttp is fixed in aiohttp 3.14.4.\n- Snyk blocked aiohttp 3.9.1 in the serving stack.\n- The serving stack policy is to always pin aiohttp>=3.14.4 from the start and never use aiohttp 3.9.1.",
-     "t_created": 1792529226339,
+     "text": "This dataset is about:\n- Companies: Snyk\n- Systems: serving stack, vLLM 0.32.0 serving image\n- Products: aiohttp, transformers 5.19.0, pip 25.1.1, torch 2.13.0\n- Security: CVE-2025-53643, HTTP Request Smuggling\n- Topics: dependency pinning policy, security vulnerabilities, mitigations\n\nFacts:\n- Snyk blocked aiohttp 3.9.1 in the serving stack after reporting 16 high and 27 medium severity issues in that version.\n- aiohttp 3.9.1 has an HTTP Request Smuggling issue tracked as CVE-2025-53643, which is fixed in aiohttp 3.14.4.\n- The serving stack policy requires always pinning aiohttp>=3.14.4 from the start and never using aiohttp 3.9.1.\n- Snyk found high-severity security issues inside the vLLM 0.32.0 serving image.\n- Snyk reported transformers 5.19.0 with 8 high and 1 medium issues in the vLLM 0.32.0 serving image.\n- Snyk reported pip 25.1.1 with 2 high, 3 medium, and 1 low issues in the vLLM 0.32.0 serving image, and the fix is to upgrade to pip 26.2.\n- Snyk reported torch 2.13.0 with 1 high and 4 medium issues in the vLLM 0.32.0 serving image.\n- No fix exists yet for transformers 5.19.0, so trust_remote_code must stay off and only vetted model repos may be served on the vLLM 0.32.0 serving image.\n- No fix exists yet for torch 2.13.0, so only trusted weights in safetensors format may be loaded on the vLLM 0.32.0 serving image.\n- Files from users must never be unpickled when serving on the vLLM 0.32.0 serving image.\n- These mitigations apply whenever the vLLM 0.32.0 serving image is used to serve models.",
+     "t_created": 1792532756376,
+     "degree": 2,
+     "importance": 0.42831734103139474,
+     "source_task": null
+    },
+    {
+     "id": "0bb5fb66-0283-5ff9-a4b3-71373e26b6ed",
+     "name": "This chunk is about Snyk security findings in the vLLM 0.32.0 serving image and their mitigations. This chunk is about: ",
+     "type": "TextSummary",
+     "entity_type": "TextSummary",
+     "text": "This chunk is about Snyk security findings in the vLLM 0.32.0 serving image and their mitigations. This chunk is about: Systems: vLLM 0.32.0 serving image. Products: transformers 5.19.0, pip 25.1.1, torch 2.13.0. Topics: security vulnerabilities, mitigations. Facts: - Snyk found high-severity issues inside the vLLM 0.32.0 serving image. - Snyk reported transformers 5.19.0 with 8 high and 1 medium issues in the vLLM 0.32.0 serving image. - No fix exists yet for transformers 5.19.0, so trust_remote_code must stay off and only vetted model repos may be served. - Snyk reported pip 25.1.1 with 2 high, 3 medium, and 1 low issues in the vLLM 0.32.0 serving image. - The fix for pip 25.1.1 is to upgrade to pip 26.2. - Snyk reported torch 2.13.0 with 1 high and 4 medium issues in the vLLM 0.32.0 serving image. - No fix exists yet for torch 2.13.0, so only trusted weights in safetensors format may be loaded. - Files from users must never be unpickled when serving on the vLLM 0.32.0 serving image. - These mitigations apply whenever the vLLM 0.32.0 serving image is used to serve models.",
+     "t_created": 1792532487394,
+     "degree": 2,
+     "importance": 0.42831734103139474,
+     "source_task": "extract_graph_and_summarize"
+    },
+    {
+     "id": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "name": "Snyk found high-severity issues inside the vLLM 0.32.0 serving image: transformers 5.19.0 (8 high, 1 medium; no fix yet:",
+     "type": "DocumentChunk",
+     "entity_type": "DocumentChunk",
+     "text": "Snyk found high-severity issues inside the vLLM 0.32.0 serving image: transformers 5.19.0 (8 high, 1 medium; no fix yet: keep trust_remote_code off and serve only vetted model repos); pip 25.1.1 (2 high, 3 medium, 1 low; upgrade to 26.2); torch 2.13.0 (1 high, 4 medium; no fix yet: only load trusted weights in safetensors format; never unpickle files from users). Apply these mitigations whenever we serve on this vLLM version.",
+     "t_created": 1792532482881,
+     "degree": 12,
+     "importance": 1.0,
+     "source_task": "extract_chunks_from_documents"
+    },
+    {
+     "id": "400b82f5-cc7c-47fe-8689-f1adc0446bf2",
+     "name": "text_fd442f5646a0790f8cea7d4514db35fb",
+     "type": "TextDocument",
+     "entity_type": "TextDocument",
+     "text": null,
+     "t_created": 1792532482872,
      "degree": 1,
-     "importance": 0.3154648767857287,
+     "importance": 0.27023815442731974,
+     "source_task": "classify_documents"
+    },
+    {
+     "id": "f89cdf57-bcd0-5244-9cea-c97f899972bf",
+     "name": "vllm 0.32.0 serving image",
+     "type": "Entity",
+     "entity_type": "software",
+     "text": null,
+     "t_created": 1792532492881,
+     "degree": 5,
+     "importance": 0.6985554954587144,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "db1727e8-d176-5a1d-8d34-7ab008d4a3a0",
+     "name": "software",
+     "type": "EntityType",
+     "entity_type": "EntityType",
+     "text": null,
+     "t_created": 1792532492881,
+     "degree": 1,
+     "importance": 0.27023815442731974,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "a0f7bc13-9c6a-5159-a0e7-a9d4837ff9e8",
+     "name": "transformers 5.19.0",
+     "type": "Entity",
+     "entity_type": "software package",
+     "text": null,
+     "t_created": 1792532492881,
+     "degree": 6,
+     "importance": 0.7586544129592989,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "54b9869d-ae92-5369-9985-010f73cf0169",
+     "name": "software package",
+     "type": "EntityType",
+     "entity_type": "EntityType",
+     "text": null,
+     "t_created": 1792532492881,
+     "degree": 4,
+     "importance": 0.6274735630753033,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "7f08da19-6579-558f-8fec-9e208a22ea4f",
+     "name": "disable trust_remote_code",
+     "type": "Entity",
+     "entity_type": "mitigation",
+     "text": null,
+     "t_created": 1792532492882,
+     "degree": 3,
+     "importance": 0.5404763088546395,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "a52dd544-6be4-59cb-9aef-36b0c6dc03da",
+     "name": "mitigation",
+     "type": "EntityType",
+     "entity_type": "EntityType",
+     "text": null,
+     "t_created": 1792532492882,
+     "degree": 4,
+     "importance": 0.6274735630753033,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "3f871866-508f-5c26-84d2-e5a2a904e072",
+     "name": "serve only vetted model repos",
+     "type": "Entity",
+     "entity_type": "mitigation",
+     "text": null,
+     "t_created": 1792532492882,
+     "degree": 3,
+     "importance": 0.5404763088546395,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "c6dbe6eb-1910-5a77-bdd7-5390f568bb83",
+     "name": "pip 25.1.1",
+     "type": "Entity",
+     "entity_type": "software package",
+     "text": null,
+     "t_created": 1792532492882,
+     "degree": 5,
+     "importance": 0.6985554954587144,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "5be2cb4d-c673-53d2-9571-b92c0fe4a5e4",
+     "name": "pip 26.2",
+     "type": "Entity",
+     "entity_type": "software package",
+     "text": null,
+     "t_created": 1792532492882,
+     "degree": 3,
+     "importance": 0.5404763088546395,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "63549940-5dcc-5d0d-bf30-1db26f12fdf1",
+     "name": "torch 2.13.0",
+     "type": "Entity",
+     "entity_type": "software package",
+     "text": null,
+     "t_created": 1792532492882,
+     "degree": 6,
+     "importance": 0.7586544129592989,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "7b64918a-afab-548e-bfe7-7c111d0fa0f7",
+     "name": "load only trusted safetensors weights",
+     "type": "Entity",
+     "entity_type": "mitigation",
+     "text": null,
+     "t_created": 1792532492882,
+     "degree": 3,
+     "importance": 0.5404763088546395,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "41aecafb-cc8c-5782-8d1b-4e5cb44a5587",
+     "name": "never unpickle user files",
+     "type": "Entity",
+     "entity_type": "mitigation",
+     "text": null,
+     "t_created": 1792532492882,
+     "degree": 3,
+     "importance": 0.5404763088546395,
+     "source_task": "extract_graph_from_data"
+    },
+    {
+     "id": "45d222c5-474e-5749-a4d0-0eac47059b17",
+     "name": "This area of the dataset is about: - Systems: vLLM 0.32.0 serving image - Products: transformers 5.19.0, pip 25.1.1, tor",
+     "type": "GlobalContextSummary",
+     "entity_type": "GlobalContextSummary",
+     "text": "This area of the dataset is about:\n- Systems: vLLM 0.32.0 serving image\n- Products: transformers 5.19.0, pip 25.1.1, torch 2.13.0\n- Topics: security vulnerabilities, mitigations\n\nFacts:\n- Snyk found high-severity security issues inside the vLLM 0.32.0 serving image.\n- Snyk reported transformers 5.19.0 with 8 high and 1 medium issues in the vLLM 0.32.0 serving image.\n- Snyk reported pip 25.1.1 with 2 high, 3 medium, and 1 low issues in the vLLM 0.32.0 serving image.\n- The fix for pip 25.1.1 is to upgrade to pip 26.2.\n- Snyk reported torch 2.13.0 with 1 high and 4 medium issues in the vLLM 0.32.0 serving image.\n- No fix exists yet for transformers 5.19.0, so trust_remote_code must stay off and only vetted model repos may be served on the vLLM 0.32.0 serving image.\n- No fix exists yet for torch 2.13.0, so only trusted weights in safetensors format may be loaded on the vLLM 0.32.0 serving image.\n- Files from users must never be unpickled when serving on the vLLM 0.32.0 serving image.\n- These mitigations apply whenever the vLLM 0.32.0 serving image is used to serve models.",
+     "t_created": 1792532749310,
+     "degree": 2,
+     "importance": 0.42831734103139474,
      "source_task": null
     }
    ],
@@ -1391,6 +2239,21 @@
      "relation": "blocked_in"
     },
     {
+     "source": "b70d7e48-9e13-5065-a4c2-e0470f757013",
+     "target": "a0f7bc13-9c6a-5159-a0e7-a9d4837ff9e8",
+     "relation": "flagged"
+    },
+    {
+     "source": "b70d7e48-9e13-5065-a4c2-e0470f757013",
+     "target": "c6dbe6eb-1910-5a77-bdd7-5390f568bb83",
+     "relation": "flagged"
+    },
+    {
+     "source": "b70d7e48-9e13-5065-a4c2-e0470f757013",
+     "target": "63549940-5dcc-5d0d-bf30-1db26f12fdf1",
+     "relation": "flagged"
+    },
+    {
      "source": "0a46ba88-5cab-5252-9f95-cdd07430f7e5",
      "target": "4555e74a-d43f-5739-b397-78eea85aca4a",
      "relation": "is_a"
@@ -1444,13 +2307,233 @@
      "source": "6ac5f665-4aad-5969-a9d0-f5d7011c39b7",
      "target": "567008f0-9602-5ca9-9a44-c1974064cded",
      "relation": "summarized_in"
+    },
+    {
+     "source": "0bb5fb66-0283-5ff9-a4b3-71373e26b6ed",
+     "target": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "relation": "made_from"
+    },
+    {
+     "source": "0bb5fb66-0283-5ff9-a4b3-71373e26b6ed",
+     "target": "45d222c5-474e-5749-a4d0-0eac47059b17",
+     "relation": "summarized_in"
+    },
+    {
+     "source": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "target": "400b82f5-cc7c-47fe-8689-f1adc0446bf2",
+     "relation": "is_part_of"
+    },
+    {
+     "source": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "target": "f89cdf57-bcd0-5244-9cea-c97f899972bf",
+     "relation": "contains"
+    },
+    {
+     "source": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "target": "b70d7e48-9e13-5065-a4c2-e0470f757013",
+     "relation": "contains"
+    },
+    {
+     "source": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "target": "a0f7bc13-9c6a-5159-a0e7-a9d4837ff9e8",
+     "relation": "contains"
+    },
+    {
+     "source": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "target": "c6dbe6eb-1910-5a77-bdd7-5390f568bb83",
+     "relation": "contains"
+    },
+    {
+     "source": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "target": "5be2cb4d-c673-53d2-9571-b92c0fe4a5e4",
+     "relation": "contains"
+    },
+    {
+     "source": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "target": "63549940-5dcc-5d0d-bf30-1db26f12fdf1",
+     "relation": "contains"
+    },
+    {
+     "source": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "target": "7f08da19-6579-558f-8fec-9e208a22ea4f",
+     "relation": "contains"
+    },
+    {
+     "source": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "target": "3f871866-508f-5c26-84d2-e5a2a904e072",
+     "relation": "contains"
+    },
+    {
+     "source": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "target": "7b64918a-afab-548e-bfe7-7c111d0fa0f7",
+     "relation": "contains"
+    },
+    {
+     "source": "87160b1e-c8e9-583f-8d2f-9fc223a28629",
+     "target": "41aecafb-cc8c-5782-8d1b-4e5cb44a5587",
+     "relation": "contains"
+    },
+    {
+     "source": "f89cdf57-bcd0-5244-9cea-c97f899972bf",
+     "target": "db1727e8-d176-5a1d-8d34-7ab008d4a3a0",
+     "relation": "is_a"
+    },
+    {
+     "source": "f89cdf57-bcd0-5244-9cea-c97f899972bf",
+     "target": "a0f7bc13-9c6a-5159-a0e7-a9d4837ff9e8",
+     "relation": "contains_package"
+    },
+    {
+     "source": "f89cdf57-bcd0-5244-9cea-c97f899972bf",
+     "target": "c6dbe6eb-1910-5a77-bdd7-5390f568bb83",
+     "relation": "contains_package"
+    },
+    {
+     "source": "f89cdf57-bcd0-5244-9cea-c97f899972bf",
+     "target": "63549940-5dcc-5d0d-bf30-1db26f12fdf1",
+     "relation": "contains_package"
+    },
+    {
+     "source": "a0f7bc13-9c6a-5159-a0e7-a9d4837ff9e8",
+     "target": "54b9869d-ae92-5369-9985-010f73cf0169",
+     "relation": "is_a"
+    },
+    {
+     "source": "a0f7bc13-9c6a-5159-a0e7-a9d4837ff9e8",
+     "target": "7f08da19-6579-558f-8fec-9e208a22ea4f",
+     "relation": "mitigated_by"
+    },
+    {
+     "source": "a0f7bc13-9c6a-5159-a0e7-a9d4837ff9e8",
+     "target": "3f871866-508f-5c26-84d2-e5a2a904e072",
+     "relation": "mitigated_by"
+    },
+    {
+     "source": "7f08da19-6579-558f-8fec-9e208a22ea4f",
+     "target": "a52dd544-6be4-59cb-9aef-36b0c6dc03da",
+     "relation": "is_a"
+    },
+    {
+     "source": "3f871866-508f-5c26-84d2-e5a2a904e072",
+     "target": "a52dd544-6be4-59cb-9aef-36b0c6dc03da",
+     "relation": "is_a"
+    },
+    {
+     "source": "c6dbe6eb-1910-5a77-bdd7-5390f568bb83",
+     "target": "54b9869d-ae92-5369-9985-010f73cf0169",
+     "relation": "is_a"
+    },
+    {
+     "source": "c6dbe6eb-1910-5a77-bdd7-5390f568bb83",
+     "target": "5be2cb4d-c673-53d2-9571-b92c0fe4a5e4",
+     "relation": "upgraded_to"
+    },
+    {
+     "source": "5be2cb4d-c673-53d2-9571-b92c0fe4a5e4",
+     "target": "54b9869d-ae92-5369-9985-010f73cf0169",
+     "relation": "is_a"
+    },
+    {
+     "source": "63549940-5dcc-5d0d-bf30-1db26f12fdf1",
+     "target": "54b9869d-ae92-5369-9985-010f73cf0169",
+     "relation": "is_a"
+    },
+    {
+     "source": "63549940-5dcc-5d0d-bf30-1db26f12fdf1",
+     "target": "7b64918a-afab-548e-bfe7-7c111d0fa0f7",
+     "relation": "mitigated_by"
+    },
+    {
+     "source": "63549940-5dcc-5d0d-bf30-1db26f12fdf1",
+     "target": "41aecafb-cc8c-5782-8d1b-4e5cb44a5587",
+     "relation": "mitigated_by"
+    },
+    {
+     "source": "7b64918a-afab-548e-bfe7-7c111d0fa0f7",
+     "target": "a52dd544-6be4-59cb-9aef-36b0c6dc03da",
+     "relation": "is_a"
+    },
+    {
+     "source": "41aecafb-cc8c-5782-8d1b-4e5cb44a5587",
+     "target": "a52dd544-6be4-59cb-9aef-36b0c6dc03da",
+     "relation": "is_a"
+    },
+    {
+     "source": "45d222c5-474e-5749-a4d0-0eac47059b17",
+     "target": "567008f0-9602-5ca9-9a44-c1974064cded",
+     "relation": "summarized_in"
     }
    ],
    "inventory": [
     {
-     "type": "GlobalContextSummary",
-     "count": 2,
+     "type": "mitigation",
+     "count": 4,
      "samples": [
+      "disable trust_remote_code",
+      "load only trusted safetensors weights",
+      "never unpickle user files",
+      "serve only vetted model repos"
+     ],
+     "relationships": [
+      {
+       "to_type": "DocumentChunk",
+       "relation": "\u2190 contains",
+       "count": 4
+      },
+      {
+       "to_type": "software package",
+       "relation": "\u2190 mitigated_by",
+       "count": 4
+      }
+     ]
+    },
+    {
+     "type": "software package",
+     "count": 4,
+     "samples": [
+      "torch 2.13.0",
+      "transformers 5.19.0",
+      "pip 25.1.1",
+      "pip 26.2"
+     ],
+     "relationships": [
+      {
+       "to_type": "DocumentChunk",
+       "relation": "\u2190 contains",
+       "count": 4
+      },
+      {
+       "to_type": "mitigation",
+       "relation": "mitigated_by",
+       "count": 4
+      },
+      {
+       "to_type": "organization",
+       "relation": "\u2190 flagged",
+       "count": 3
+      },
+      {
+       "to_type": "software",
+       "relation": "\u2190 contains_package",
+       "count": 3
+      },
+      {
+       "to_type": "software package",
+       "relation": "upgraded_to",
+       "count": 1
+      },
+      {
+       "to_type": "software package",
+       "relation": "\u2190 upgraded_to",
+       "count": 1
+      }
+     ]
+    },
+    {
+     "type": "GlobalContextSummary",
+     "count": 3,
+     "samples": [
+      "",
       "",
       ""
      ],
@@ -1458,17 +2541,112 @@
       {
        "to_type": "GlobalContextSummary",
        "relation": "summarized_in",
-       "count": 1
+       "count": 2
       },
       {
        "to_type": "GlobalContextSummary",
        "relation": "\u2190 summarized_in",
-       "count": 1
+       "count": 2
       },
       {
        "to_type": "TextSummary",
        "relation": "\u2190 summarized_in",
+       "count": 2
+      }
+     ]
+    },
+    {
+     "type": "DocumentChunk",
+     "count": 2,
+     "samples": [
+      "",
+      ""
+     ],
+     "relationships": [
+      {
+       "to_type": "mitigation",
+       "relation": "contains",
+       "count": 4
+      },
+      {
+       "to_type": "software package",
+       "relation": "contains",
+       "count": 4
+      },
+      {
+       "to_type": "TextDocument",
+       "relation": "is_part_of",
+       "count": 2
+      },
+      {
+       "to_type": "TextSummary",
+       "relation": "\u2190 made_from",
+       "count": 2
+      },
+      {
+       "to_type": "organization",
+       "relation": "contains",
+       "count": 2
+      },
+      {
+       "to_type": "software version",
+       "relation": "contains",
+       "count": 2
+      },
+      {
+       "to_type": "software",
+       "relation": "contains",
        "count": 1
+      },
+      {
+       "to_type": "system",
+       "relation": "contains",
+       "count": 1
+      },
+      {
+       "to_type": "vulnerability",
+       "relation": "contains",
+       "count": 1
+      },
+      {
+       "to_type": "vulnerability type",
+       "relation": "contains",
+       "count": 1
+      }
+     ]
+    },
+    {
+     "type": "TextDocument",
+     "count": 2,
+     "samples": [
+      "text_78c03e21afcbee160bd0bd65816e9926",
+      "text_fd442f5646a0790f8cea7d4514db35fb"
+     ],
+     "relationships": [
+      {
+       "to_type": "DocumentChunk",
+       "relation": "\u2190 is_part_of",
+       "count": 2
+      }
+     ]
+    },
+    {
+     "type": "TextSummary",
+     "count": 2,
+     "samples": [
+      "",
+      ""
+     ],
+     "relationships": [
+      {
+       "to_type": "DocumentChunk",
+       "relation": "made_from",
+       "count": 2
+      },
+      {
+       "to_type": "GlobalContextSummary",
+       "relation": "summarized_in",
+       "count": 2
       }
      ]
     },
@@ -1518,83 +2696,6 @@
      ]
     },
     {
-     "type": "DocumentChunk",
-     "count": 1,
-     "samples": [
-      ""
-     ],
-     "relationships": [
-      {
-       "to_type": "software version",
-       "relation": "contains",
-       "count": 2
-      },
-      {
-       "to_type": "TextDocument",
-       "relation": "is_part_of",
-       "count": 1
-      },
-      {
-       "to_type": "TextSummary",
-       "relation": "\u2190 made_from",
-       "count": 1
-      },
-      {
-       "to_type": "organization",
-       "relation": "contains",
-       "count": 1
-      },
-      {
-       "to_type": "system",
-       "relation": "contains",
-       "count": 1
-      },
-      {
-       "to_type": "vulnerability",
-       "relation": "contains",
-       "count": 1
-      },
-      {
-       "to_type": "vulnerability type",
-       "relation": "contains",
-       "count": 1
-      }
-     ]
-    },
-    {
-     "type": "TextDocument",
-     "count": 1,
-     "samples": [
-      "text_78c03e21afcbee160bd0bd65816e9926"
-     ],
-     "relationships": [
-      {
-       "to_type": "DocumentChunk",
-       "relation": "\u2190 is_part_of",
-       "count": 1
-      }
-     ]
-    },
-    {
-     "type": "TextSummary",
-     "count": 1,
-     "samples": [
-      ""
-     ],
-     "relationships": [
-      {
-       "to_type": "DocumentChunk",
-       "relation": "made_from",
-       "count": 1
-      },
-      {
-       "to_type": "GlobalContextSummary",
-       "relation": "summarized_in",
-       "count": 1
-      }
-     ]
-    },
-    {
      "type": "organization",
      "count": 1,
      "samples": [
@@ -1602,9 +2703,14 @@
      ],
      "relationships": [
       {
+       "to_type": "software package",
+       "relation": "flagged",
+       "count": 3
+      },
+      {
        "to_type": "DocumentChunk",
        "relation": "\u2190 contains",
-       "count": 1
+       "count": 2
       },
       {
        "to_type": "software version",
@@ -1614,6 +2720,25 @@
       {
        "to_type": "system",
        "relation": "blocked_in",
+       "count": 1
+      }
+     ]
+    },
+    {
+     "type": "software",
+     "count": 1,
+     "samples": [
+      "vllm 0.32.0 serving image"
+     ],
+     "relationships": [
+      {
+       "to_type": "software package",
+       "relation": "contains_package",
+       "count": 3
+      },
+      {
+       "to_type": "DocumentChunk",
+       "relation": "\u2190 contains",
        "count": 1
       }
      ]
@@ -1694,12 +2819,12 @@
    "questions": [
     {
      "question": "Which serving packages and versions were flagged, and what is the fixed version?",
-     "answer": "Flagged: aiohttp 3.9.1 (in the serving stack, 16 high and 27 medium severity issues, including CVE-2025-53643, HTTP request smuggling). Fixed version: aiohttp 3.14.4 or later.",
+     "answer": "**Flagged packages:**\n- **pip 25.1.1** (vLLM 0.32.0 image): fixed in **26.2**\n- **aiohttp 3.9.1** (serving stack): fixed in **3.14.4**\n- **transformers 5.19.0** (vLLM 0.32.0 image): no fix yet\n- **torch 2.13.0** (vLLM 0.32.0 image): no fix yet",
      "node_ids": [
       "4468d34f-68b6-55b8-a833-824881370bbe",
       "1e68661b-b39b-5759-aaa9-faa2e72dd019",
-      "4ef54d82-e26a-5eba-9a3b-b32f6d6c47c3",
-      "8c733586-cccc-5c03-8b3f-0c844fab147e"
+      "8c733586-cccc-5c03-8b3f-0c844fab147e",
+      "4ef54d82-e26a-5eba-9a3b-b32f6d6c47c3"
      ]
     }
    ]

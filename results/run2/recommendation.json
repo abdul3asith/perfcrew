@@ -1,0 +1,48 @@
+{
+  "tokens_per_month": 200000000000.0,
+  "max_quality_drop_points": 3.4,
+  "baseline": {
+    "config": "original-3b",
+    "label": "Original model (full size)",
+    "monthly_cost_usd": 13200.0,
+    "quality_pct": 96.7
+  },
+  "options": [
+    {
+      "config": "fp8-3b",
+      "label": "Compressed (FP8)",
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "monthly_cost_usd": 9620.0,
+      "monthly_savings_usd": 3580.0,
+      "savings_pct": 27.1,
+      "speedup": 1.37,
+      "quality_change_points": 0.0,
+      "quality_pct": 96.7,
+      "acceptable": true
+    },
+    {
+      "config": "awq-3b",
+      "label": "Compressed (4-bit AWQ)",
+      "model": "Qwen/Qwen2.5-3B-Instruct-AWQ",
+      "monthly_cost_usd": 8580.0,
+      "monthly_savings_usd": 4620.0,
+      "savings_pct": 35.0,
+      "speedup": 1.54,
+      "quality_change_points": 0.0,
+      "quality_pct": 96.7,
+      "acceptable": true
+    }
+  ],
+  "recommendation": {
+    "config": "awq-3b",
+    "label": "Compressed (4-bit AWQ)",
+    "model": "Qwen/Qwen2.5-3B-Instruct-AWQ",
+    "monthly_cost_usd": 8580.0,
+    "monthly_savings_usd": 4620.0,
+    "savings_pct": 35.0,
+    "speedup": 1.54,
+    "quality_change_points": 0.0,
+    "quality_pct": 96.7,
+    "acceptable": true
+  }
+}

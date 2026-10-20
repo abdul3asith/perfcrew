@@ -1,0 +1,23 @@
+{
+  "config": "fp8-3b",
+  "label": "Compressed (FP8)",
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "gpu": "L4",
+  "gpu_usd_per_hour": 0.7992,
+  "vllm_version": "0.32.0",
+  "timestamp": "2026-10-20T21:40:29+00:00",
+  "gpu_seconds": 116.2,
+  "gpu_cost_usd": 0.0258,
+  "tokens_per_sec": 4709.3,
+  "quality_pct": 96.7,
+  "usd_per_1m_tokens": 0.0471,
+  "quality_correct": 29,
+  "quality_total": 30,
+  "quality_misses": [
+    "You buy 3 dozen eggs and break 7. How many eggs are left?"
+  ],
+  "batch_prompts": 128,
+  "output_tokens_per_prompt": 256,
+  "generated_tokens": 32768,
+  "elapsed_sec": 6.96
+}
