@@ -1,0 +1,19 @@
+{
+  "config": "original",
+  "label": "Original model (full size)",
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "gpu": "L4",
+  "gpu_usd_per_hour": 0.7992,
+  "vllm_version": "0.32.0",
+  "timestamp": "2026-10-20T19:03:09+00:00",
+  "tokens_per_sec": 5998.7,
+  "quality_pct": 100.0,
+  "usd_per_1m_tokens": 0.037,
+  "quality_correct": 20,
+  "quality_total": 20,
+  "quality_misses": [],
+  "batch_prompts": 128,
+  "output_tokens_per_prompt": 256,
+  "generated_tokens": 32768,
+  "elapsed_sec": 5.46
+}
