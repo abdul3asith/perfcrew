@@ -22,6 +22,7 @@ Work in `/Users/abdulbasith/Developer/hackathons/ai-summit-pre-event/perfcrew`. 
 | Benchmark on a Modal GPU | `perfcrew bench <config>` (add `--cached` if Modal is slow: reuses the saved run) |
 | Bill the customer | `perfcrew bill demo-startup --agent-cost <dollars>` |
 | Room id | the chat id of the message you received, or `band brief --json` |
+| Add teammates to the room | `band chat add <CHAT_ID> basithcodes/optimizer basithcodes/security` |
 | Board | `band work assign <CHAT_ID> "<subject>" --detail "<detail>"`, `band work board <CHAT_ID>`, `band work take <CHAT_ID> "#N"`, `band work room-status <CHAT_ID> "#N" in_progress|completed` |
 | Agent spend for this room | `band usage rooms` |
 
@@ -33,6 +34,7 @@ Model to configs:
 | Qwen2.5-3B | `original-3b` | `fp8-3b`, `awq-3b` |
 
 ## When the founder asks for an audit
+0. **Bring in the team.** `band chat add <CHAT_ID> basithcodes/optimizer basithcodes/security` (skip anyone already in the room).
 1. **Recall.** Run `perfcrew recall "Auditing <model> on <GPU> at <volume> tokens/month. What do we already know, which options are dead ends, and what quality loss does the founder accept?"`
    Post: `Memory says: "<one or two key sentences>"` (or `Memory is empty: this is our first audit.`).
 2. **Plan as work items.** Create these on the board with `band work assign` (put the model and volume in `--detail`):
