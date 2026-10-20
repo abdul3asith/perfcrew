@@ -1,11 +1,12 @@
 {
   "verdict": "PASS",
-  "timestamp": "2026-10-20T19:31:39+00:00",
+  "timestamp": "2026-10-20T19:33:56+00:00",
   "requirements": "serving/requirements.txt",
   "dependency_findings": [],
   "code_scan": {
-    "status": "skipped",
-    "reason": "Snyk Code is not supported for your current organization: `abdul3asith`."
+    "status": "PASS",
+    "issues": 0,
+    "high": 0
   },
   "memory_notes": []
 }
