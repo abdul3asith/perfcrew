@@ -40,4 +40,15 @@ QUALITY_QUESTIONS = [
     ("Which planet is known as the Red Planet?", ["mars"]),
     ("How many sides does a hexagon have?", ["6", "six"]),
     ("What is 250 divided by 5?", ["50"]),
+    # Harder multi-step arithmetic: where compressed small models tend to slip
+    ("What is 23 multiplied by 17?", ["391"]),
+    ("What is 1234 plus 5678?", ["6912"]),
+    ("A train travels at 60 miles per hour for 3.5 hours. How many miles does it travel?", ["210"]),
+    ("What is 15 percent of 240?", ["36"]),
+    ("What is 2 raised to the power of 10?", ["1024", "1,024"]),
+    ("A rectangle is 14 cm long and 9 cm wide. What is its area in square centimeters?", ["126"]),
+    ("What is 1000 minus 387?", ["613"]),
+    ("You buy 3 dozen eggs and break 7. How many eggs are left?", ["29"]),
+    ("What is 19 squared?", ["361"]),
+    ("What is 7 factorial?", ["5040", "5,040"]),
 ]
