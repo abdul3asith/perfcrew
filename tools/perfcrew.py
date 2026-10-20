@@ -20,8 +20,20 @@ BASELINE = "original"
 DEFAULT_TOKENS_PER_MONTH = 200e9  # editable: a startup serving ~200B tokens/month
 
 
+def show_result(r):
+    print(f"{r['label']} [{r['config']}, {r['model']}]: {r['tokens_per_sec']:,.0f} tokens/sec, "
+          f"quality {r['quality_pct']}%, ${r['usd_per_1m_tokens']}/1M tokens")
+
+
 def cmd_bench(args):
     """Run the Modal benchmark for one config (or all) and refresh results/<config>.json."""
+    if args.cached:  # demo fallback: reuse the saved run instead of a live GPU
+        for name in args.config.split(","):
+            f = RESULTS / f"{name}.json"
+            if not f.exists():
+                sys.exit(f"No saved result for {name}; run without --cached.")
+            print("(saved result) ", end=""); show_result(json.loads(f.read_text()))
+        return 0
     modal = ROOT / ".venv/bin/modal"
     cmd = [str(modal if modal.exists() else "modal"), "run", str(ROOT / "bench/modal_bench.py"), "--config", args.config]
     return subprocess.run(cmd).returncode
@@ -49,9 +61,13 @@ def money(x):
 
 def cmd_compare(args):
     results = load_results()
-    if BASELINE not in results:
-        sys.exit(f"No baseline: run `python tools/perfcrew.py bench {BASELINE}` first.")
-    base = results[BASELINE]
+    names = args.configs.split(",")
+    baseline = names[0]
+    missing = [n for n in names if n not in results]
+    if missing:
+        sys.exit(f"No results for {', '.join(missing)}: run `python tools/perfcrew.py bench <config>` first.")
+    results = {n: results[n] for n in names}
+    base = results[baseline]
     millions = args.tokens_per_month / 1e6
     base_cost = base["usd_per_1m_tokens"] * millions
 
@@ -60,7 +76,7 @@ def cmd_compare(args):
 
     options = []
     for name, r in results.items():
-        if name == BASELINE:
+        if name == baseline:
             continue
         cost = r["usd_per_1m_tokens"] * millions
         opt = {
@@ -81,7 +97,7 @@ def cmd_compare(args):
     rec = {
         "tokens_per_month": args.tokens_per_month,
         "max_quality_drop_points": args.max_quality_drop,
-        "baseline": {"config": BASELINE, "label": base["label"], "monthly_cost_usd": round(base_cost, 2),
+        "baseline": {"config": baseline, "label": base["label"], "monthly_cost_usd": round(base_cost, 2),
                      "quality_pct": base["quality_pct"]},
         "options": options,
         "recommendation": best,
@@ -145,6 +161,11 @@ def cmd_fix(args):
         security.reseed()
         print("Re-seeded the known-vulnerable pin (aiohttp==3.9.1) for the demo.")
         return
+    if args.pin:
+        pkg, ver = args.pin.split("==")
+        security.reseed(pkg, ver)
+        print(f"Pinned {pkg}=={ver} in serving/requirements.txt before scanning (avoiding a known-bad version).")
+        return
     changes = security.fix()
     print("Updated serving/requirements.txt: " + ("; ".join(changes) if changes else "nothing to fix"))
     print("Run `python tools/perfcrew.py scan` to confirm PASS.")
@@ -169,10 +190,14 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
 
     b = sub.add_parser("bench", help="benchmark a serving config on a Modal L4")
-    b.add_argument("config", nargs="?", default="all", help="original | fp8 | awq | all")
+    b.add_argument("config", nargs="?", default="all",
+                   help="original | fp8 | awq | original-3b | fp8-3b | awq-3b | all (comma list with --cached)")
+    b.add_argument("--cached", action="store_true", help="print the saved result instead of running on a GPU")
     b.set_defaults(fn=cmd_bench)
 
     c = sub.add_parser("compare", help="turn benchmark results into a monthly savings report")
+    c.add_argument("--configs", default="original,fp8,awq",
+                   help="comma list; the first one is today's setup (baseline)")
     c.add_argument("--tokens-per-month", type=float, default=DEFAULT_TOKENS_PER_MONTH)
     c.add_argument("--max-quality-drop", type=float, default=5.0,
                    help="largest quality loss (points) the founder accepts")
@@ -205,6 +230,7 @@ def main():
 
     fx = sub.add_parser("fix", help="upgrade blocked packages to their fixed versions")
     fx.add_argument("--reseed", action="store_true", help="demo: put the vulnerable pin back")
+    fx.add_argument("--pin", help="pin one package up front, e.g. aiohttp==3.14.4")
     fx.set_defaults(fn=cmd_fix)
 
     bl = sub.add_parser("bill", help="bill the customer in Flexprice for this audit")

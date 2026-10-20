@@ -9,23 +9,23 @@
   },
   "options": [
     {
-      "config": "awq",
-      "label": "Compressed (4-bit AWQ)",
-      "model": "Qwen/Qwen2.5-1.5B-Instruct-AWQ",
-      "monthly_cost_usd": 5420.0,
-      "monthly_savings_usd": 1860.0,
-      "speedup": 1.34,
-      "quality_change_points": -3.3,
-      "quality_pct": 93.3,
-      "acceptable": true
-    },
-    {
       "config": "fp8",
       "label": "Compressed (FP8)",
       "model": "Qwen/Qwen2.5-1.5B-Instruct",
       "monthly_cost_usd": 6020.0,
       "monthly_savings_usd": 1260.0,
       "speedup": 1.21,
+      "quality_change_points": -3.3,
+      "quality_pct": 93.3,
+      "acceptable": true
+    },
+    {
+      "config": "awq",
+      "label": "Compressed (4-bit AWQ)",
+      "model": "Qwen/Qwen2.5-1.5B-Instruct-AWQ",
+      "monthly_cost_usd": 5420.0,
+      "monthly_savings_usd": 1860.0,
+      "speedup": 1.34,
       "quality_change_points": -3.3,
       "quality_pct": 93.3,
       "acceptable": true

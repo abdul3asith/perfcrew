@@ -1,7 +1,8 @@
 """Pre-download model weights into a Modal Volume (CPU only, no GPU needed)."""
 import modal
 
-MODELS = ["Qwen/Qwen2.5-1.5B-Instruct", "Qwen/Qwen2.5-1.5B-Instruct-AWQ"]
+MODELS = ["Qwen/Qwen2.5-1.5B-Instruct", "Qwen/Qwen2.5-1.5B-Instruct-AWQ",
+          "Qwen/Qwen2.5-3B-Instruct", "Qwen/Qwen2.5-3B-Instruct-AWQ"]
 
 app = modal.App("perfcrew-download")
 volume = modal.Volume.from_name("perfcrew-weights", create_if_missing=True)
