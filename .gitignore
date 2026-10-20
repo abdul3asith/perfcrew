@@ -5,3 +5,4 @@ __pycache__/
 .cognee_system/
 .data_storage/
 .DS_Store
+.cognee/

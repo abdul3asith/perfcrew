@@ -96,6 +96,34 @@ def cmd_compare(args):
     print("Saved results/recommendation.json")
 
 
+def cmd_remember(args):
+    import memory
+    text = " ".join(args.text)
+    if args.decision:
+        text = f"Founder decision: {text}"
+    status = memory.remember(text, args.dataset)
+    print(f"Remembered in {args.dataset} ({status}): {text}")
+
+
+def cmd_recall(args):
+    import memory
+    question = " ".join(args.question)
+    print(f"Memory recall: {question}")
+    print(memory.recall(question, [args.dataset] if args.dataset else None))
+
+
+def cmd_improve(args):
+    import memory
+    for ds in [args.dataset] if args.dataset else memory.DATASETS:
+        print(f"Improved {ds}: {memory.improve(ds)}")
+
+
+def cmd_forget(args):
+    import memory
+    memory.forget(args.dataset)
+    print(f"Forgot everything in {args.dataset}" + (f" (reason: {args.reason})" if args.reason else ""))
+
+
 def stub(name):
     def run(args):
         sys.exit(f"`{name}` is not implemented yet (coming in a later phase).")
@@ -116,7 +144,28 @@ def main():
                    help="largest quality loss (points) the founder accepts")
     c.set_defaults(fn=cmd_compare)
 
-    for name in ["recall", "remember", "improve", "forget", "scan", "bill"]:
+    datasets = ["perf_lore", "security_lore"]
+    m = sub.add_parser("remember", help="store a lesson, finding or founder decision")
+    m.add_argument("text", nargs="+")
+    m.add_argument("--dataset", choices=datasets, default="perf_lore")
+    m.add_argument("--decision", action="store_true", help="store as a founder decision (perf_lore)")
+    m.set_defaults(fn=cmd_remember)
+
+    r = sub.add_parser("recall", help="ask memory a question (searches both datasets)")
+    r.add_argument("question", nargs="+")
+    r.add_argument("--dataset", choices=datasets)
+    r.set_defaults(fn=cmd_recall)
+
+    i = sub.add_parser("improve", help="consolidate memory after an audit")
+    i.add_argument("--dataset", choices=datasets)
+    i.set_defaults(fn=cmd_improve)
+
+    f = sub.add_parser("forget", help="wipe one dataset (e.g. stale benchmarks after a library upgrade)")
+    f.add_argument("dataset", choices=datasets)
+    f.add_argument("--reason", default="")
+    f.set_defaults(fn=cmd_forget)
+
+    for name in ["scan", "bill"]:
         s = sub.add_parser(name, help="(later phase)")
         s.add_argument("rest", nargs="*")
         s.set_defaults(fn=stub(name))
