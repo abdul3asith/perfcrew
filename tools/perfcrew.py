@@ -124,6 +124,30 @@ def cmd_forget(args):
     print(f"Forgot everything in {args.dataset}" + (f" (reason: {args.reason})" if args.reason else ""))
 
 
+def cmd_scan(args):
+    import security
+    report = security.scan()
+    print(security.summary(report))
+    for note in report["memory_notes"]:
+        print(f"\nMemory note for security_lore:\n  {note}")
+        if args.remember:
+            import memory
+            memory.remember(note, "security_lore")
+            print("  (stored in security_lore)")
+    print("Saved results/security.json")
+
+
+def cmd_fix(args):
+    import security
+    if args.reseed:
+        security.reseed()
+        print("Re-seeded the known-vulnerable pin (aiohttp==3.9.1) for the demo.")
+        return
+    changes = security.fix()
+    print("Updated serving/requirements.txt: " + ("; ".join(changes) if changes else "nothing to fix"))
+    print("Run `python tools/perfcrew.py scan` to confirm PASS.")
+
+
 def stub(name):
     def run(args):
         sys.exit(f"`{name}` is not implemented yet (coming in a later phase).")
@@ -165,7 +189,15 @@ def main():
     f.add_argument("--reason", default="")
     f.set_defaults(fn=cmd_forget)
 
-    for name in ["scan", "bill"]:
+    sc = sub.add_parser("scan", help="Snyk security gate on the serving stack: PASS or BLOCK")
+    sc.add_argument("--remember", action="store_true", help="store blocking findings in security_lore")
+    sc.set_defaults(fn=cmd_scan)
+
+    fx = sub.add_parser("fix", help="upgrade blocked packages to their fixed versions")
+    fx.add_argument("--reseed", action="store_true", help="demo: put the vulnerable pin back")
+    fx.set_defaults(fn=cmd_fix)
+
+    for name in ["bill"]:
         s = sub.add_parser(name, help="(later phase)")
         s.add_argument("rest", nargs="*")
         s.set_defaults(fn=stub(name))

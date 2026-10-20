@@ -1,0 +1,27 @@
+{
+  "verdict": "BLOCK",
+  "timestamp": "2026-10-20T19:31:55+00:00",
+  "requirements": "serving/requirements.txt",
+  "dependency_findings": [
+    {
+      "package": "aiohttp",
+      "version": "3.9.1",
+      "severity": "high",
+      "counts": {
+        "high": 16,
+        "medium": 27
+      },
+      "example": "HTTP Request Smuggling (CVE-2025-53643)",
+      "fix_version": "3.14.4",
+      "direct": true,
+      "blocks": true
+    }
+  ],
+  "code_scan": {
+    "status": "skipped",
+    "reason": "Snyk Code is not supported for your current organization: `abdul3asith`."
+  },
+  "memory_notes": [
+    "Snyk blocked aiohttp 3.9.1 in the serving stack: 16 high, 27 medium severity issues, for example HTTP Request Smuggling (CVE-2025-53643). Fixed in aiohttp 3.14.4. Always pin aiohttp>=3.14.4 from the start and never use 3.9.1."
+  ]
+}
