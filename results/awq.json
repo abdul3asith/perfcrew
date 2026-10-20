@@ -5,10 +5,12 @@
   "gpu": "L4",
   "gpu_usd_per_hour": 0.7992,
   "vllm_version": "0.32.0",
-  "timestamp": "2026-10-20T20:37:58+00:00",
-  "tokens_per_sec": 8214.4,
+  "timestamp": "2026-10-20T20:59:53+00:00",
+  "gpu_seconds": 126.9,
+  "gpu_cost_usd": 0.0282,
+  "tokens_per_sec": 8106.2,
   "quality_pct": 93.3,
-  "usd_per_1m_tokens": 0.027,
+  "usd_per_1m_tokens": 0.0274,
   "quality_correct": 28,
   "quality_total": 30,
   "quality_misses": [
@@ -18,5 +20,5 @@
   "batch_prompts": 128,
   "output_tokens_per_prompt": 256,
   "generated_tokens": 32768,
-  "elapsed_sec": 3.99
+  "elapsed_sec": 4.04
 }

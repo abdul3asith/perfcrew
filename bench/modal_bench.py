@@ -34,6 +34,7 @@ def bench(config: str) -> dict:
 
     from eval_set import OUTPUT_TOKENS, QUALITY_QUESTIONS, THROUGHPUT_PROMPTS
 
+    started = time.perf_counter()  # GPU time we pay for: model load + benchmark + eval
     cfg = CONFIGS[config]
     result = {"config": config, "label": cfg["label"], "model": cfg["model"], "gpu": GPU,
               "gpu_usd_per_hour": round(GPU_USD_PER_HOUR, 4), "vllm_version": VLLM_VERSION,
@@ -62,7 +63,10 @@ def bench(config: str) -> dict:
     misses = [q for (q, ok), a in zip(QUALITY_QUESTIONS, answers) if not any(x in a.lower() for x in ok)]
     correct = len(QUALITY_QUESTIONS) - len(misses)
 
+    gpu_seconds = time.perf_counter() - started
     return {**result,
+            "gpu_seconds": round(gpu_seconds, 1),
+            "gpu_cost_usd": round(gpu_seconds * GPU_USD_PER_HOUR / 3600, 4),
             "tokens_per_sec": round(tok_s, 1),
             "quality_pct": round(100 * correct / len(QUALITY_QUESTIONS), 1),
             "usd_per_1m_tokens": round(GPU_USD_PER_HOUR / (tok_s * 3600) * 1e6, 4),

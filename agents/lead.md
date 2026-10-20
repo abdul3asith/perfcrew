@@ -29,11 +29,10 @@ Work in `/Users/abdulbasith/Developer/hackathons/ai-summit-pre-event/perfcrew`. 
 | Store a lesson / founder decision | `perfcrew remember "<text>"` / `perfcrew remember --decision "<text>"` |
 | Consolidate memory after an audit | `perfcrew improve` |
 | Benchmark on a Modal GPU | `perfcrew bench <config>` (add `--cached` if Modal is slow: reuses the saved run) |
-| Bill the customer | `perfcrew bill <customer> --agent-cost <dollars>` (customer is `acme-ai` unless the founder names another) |
+| Bill the customer (once per audit) | `perfcrew bill <customer> --audit-id <CHAT_ID>` (customer is `acme-ai-demo` unless the founder names another). It measures this audit's GPU spend itself and refuses to bill the same room twice. |
 | Room id | the chat id of the message you received, or `band --session perfcrew-lead brief --json` |
 | Add teammates to the room | `band --session perfcrew-lead chat add <CHAT_ID> basithcodes/optimizer basithcodes/security` |
 | Board | `band --session perfcrew-lead work assign <CHAT_ID> "<subject>" --detail "<detail>"`, `band --session perfcrew-lead work board <CHAT_ID>`, `band --session perfcrew-lead work take <CHAT_ID> "#N"`, `band --session perfcrew-lead work room-status <CHAT_ID> "#N" in_progress|completed` |
-| Agent spend for this audit | ask the founder: `band --session perfcrew-lead ask --prompt "What did this audit cost in agent spend? Read it from Band's cost view, in dollars."` |
 
 Model to configs:
 
@@ -63,9 +62,7 @@ Model to configs:
   1. Take item 5 and set it `in_progress`.
   2. `perfcrew remember --decision "Founder approved <option> for <model>: saves $<X>/month with quality <N> points."`
   3. `perfcrew improve`
-  4. Ask the founder for the agent spend (the `ask` command above; they read it from Band's cost view), then
-     `perfcrew bill acme-ai --agent-cost <their number>`. Never guess the number.
-  5. Post the final one-line summary (copy the bill output's numbers):
-     `Done: switched to <option>. Saves $<X>/month (<P>%), quality <N> points, security PASS. Audit cost $<A>, billed $<B>.`
+  4. `perfcrew bill acme-ai-demo --audit-id <CHAT_ID>`. Run it **exactly once**; never re-run it, and never ask the founder for a cost.
+  5. Post the bill output's `FINAL:` line word for word (without the `FINAL:` prefix).
   6. Mark item 5 `completed`.
 - **Rejected:** `perfcrew remember --decision "Founder rejected <option> for <model> (quality <N> points, saves $<X>/month). Reason: <reason if given>."`, post `Keeping today's setup. Lesson stored.`, and mark item 5 `completed`.

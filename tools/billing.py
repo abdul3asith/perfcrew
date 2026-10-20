@@ -66,6 +66,12 @@ def setup(customer_id: str) -> dict:
 
     subs = state.setdefault("subscriptions", {})
     if customer_id not in subs:
+        try:  # create the customer on first bill; an existing one is fine
+            _api("POST", "/customers", json={"external_id": customer_id, "name": customer_id,
+                                              "metadata": {"source": "perfcrew"}})
+        except RuntimeError as e:
+            if "exist" not in str(e).lower() and "409" not in str(e):
+                raise
         subs[customer_id] = _api("POST", "/subscriptions", json={
             "plan_id": state["plan_id"], "external_customer_id": customer_id, "currency": "usd",
             "billing_period": "MONTHLY", "billing_period_count": 1,
@@ -85,10 +91,37 @@ def send_event(customer_id: str, name: str, props: dict, audit_id: str) -> str:
     return res.get("event_id", "?")
 
 
-def bill(customer_id: str, agent_cost_usd: float, recommendation: dict) -> dict:
+def already_billed(audit_id: str) -> dict | None:
+    if not LOG_FILE.exists():
+        return None
+    return next((json.loads(l) for l in LOG_FILE.read_text().splitlines() if json.loads(l)["audit_id"] == audit_id), None)
+
+
+def last_bill_time() -> str:
+    """When the previous audit was billed (any customer): benchmarks after this belong to the current audit."""
+    if not LOG_FILE.exists():
+        return ""
+    lines = LOG_FILE.read_text().splitlines()
+    return json.loads(lines[-1])["timestamp"] if lines else ""
+
+
+def gpu_cost_since(since: str, results_dir: Path) -> tuple[float, list[str]]:
+    """Measured GPU spend of the benchmarks run in this audit (from each result's gpu_cost_usd)."""
+    total, configs = 0.0, []
+    for f in sorted(results_dir.glob("*.json")):
+        r = json.loads(f.read_text())
+        if "gpu_cost_usd" in r and r.get("timestamp", "") > since:
+            total += r["gpu_cost_usd"]
+            configs.append(r["config"])
+    return round(total, 4), configs
+
+
+def bill(customer_id: str, agent_cost_usd: float, recommendation: dict, audit_id: str | None = None,
+         gpu_cost_usd: float = 0.0) -> dict:
     rec = recommendation.get("recommendation") or {}
     savings = float(rec.get("monthly_savings_usd") or 0)
-    audit_id = f"audit-{uuid.uuid4().hex[:8]}"
+    audit_id = audit_id or f"audit-{uuid.uuid4().hex[:8]}"
+    agent_cost_usd = round(gpu_cost_usd + agent_cost_usd, 2)  # measured GPU + any extra the founder adds
     previous = sum(1 for line in LOG_FILE.read_text().splitlines()
                    if json.loads(line)["customer_id"] == customer_id) if LOG_FILE.exists() else 0
 
@@ -103,6 +136,8 @@ def bill(customer_id: str, agent_cost_usd: float, recommendation: dict) -> dict:
     audit_fee = 0 if previous == 0 else PER_AUDIT_USD
     charge = audit_fee + SAVINGS_SHARE * savings
     entry = {"audit_id": audit_id, "customer_id": customer_id, "audit_number": previous + 1,
+             "gpu_cost_usd": gpu_cost_usd, "quality_change_points": rec.get("quality_change_points"),
+             "option": rec.get("label"), "savings_pct": rec.get("savings_pct"),
              "agent_cost_usd": agent_cost_usd, "monthly_savings_usd": savings,
              "audit_fee_usd": audit_fee, "savings_fee_usd": round(SAVINGS_SHARE * savings, 2),
              "estimated_charge_usd": round(charge, 2), "margin_usd": round(charge - agent_cost_usd, 2),

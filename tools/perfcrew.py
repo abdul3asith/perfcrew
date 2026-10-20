@@ -82,6 +82,7 @@ def cmd_compare(args):
         opt = {
             "config": name, "label": r["label"], "model": r["model"],
             "monthly_cost_usd": round(cost, 2), "monthly_savings_usd": round(base_cost - cost, 2),
+            "savings_pct": round(100 * (base_cost - cost) / base_cost, 1),
             "speedup": round(r["tokens_per_sec"] / base["tokens_per_sec"], 2),
             "quality_change_points": quality_change(r, base),
             "quality_pct": r["quality_pct"],
@@ -173,16 +174,30 @@ def cmd_fix(args):
 
 def cmd_bill(args):
     import billing
+    if args.audit_id and (prev := billing.already_billed(args.audit_id)):
+        sys.exit(f"Already billed audit {args.audit_id} ({prev['customer_id']}, ${prev['estimated_charge_usd']:,.2f} "
+                 f"at {prev['timestamp']}). Not billing twice.")
     billing.setup(args.customer_id)
     rec = json.loads((RESULTS / "recommendation.json").read_text())
-    e = billing.bill(args.customer_id, args.agent_cost, rec)
+    gpu, configs = billing.gpu_cost_since(billing.last_bill_time(), RESULTS)
+    e = billing.bill(args.customer_id, args.agent_cost, rec, audit_id=args.audit_id, gpu_cost_usd=gpu)
     fee = "first audit free" if e["audit_fee_usd"] == 0 else f"${e['audit_fee_usd']} audit fee"
+    print(f"Measured GPU spend for this audit: ${gpu:,.2f} ({', '.join(configs) or 'no new benchmarks'})")
     print(f"Audit cost ${e['agent_cost_usd']:,.2f}, saves ${e['monthly_savings_usd']:,.0f}/month, "
           f"billed: audit_run x1, verified_savings ${e['monthly_savings_usd']:,.0f}, "
           f"agent_cost ${e['agent_cost_usd']:,.2f}")
     print(f"Customer pays ${e['estimated_charge_usd']:,.2f} this audit ({fee} + "
           f"{billing.SAVINGS_SHARE:.0%} of savings), our margin ${e['margin_usd']:,.2f}. "
           f"Audit #{e['audit_number']} for {args.customer_id}, id {e['audit_id']}.")
+    sec = json.loads((RESULTS / "security.json").read_text())["verdict"] if (RESULTS / "security.json").exists() else "not run"
+    r = rec.get("recommendation")
+    if r:
+        print(f"\nFINAL: Done: switched to {r['label']}. Saves ${r['monthly_savings_usd']:,.0f}/month ({r['savings_pct']:.0f}%), "
+              f"quality {r['quality_change_points']:+.1f} points, security {sec}. "
+              f"Audit cost ${e['agent_cost_usd']:,.2f}, billed ${e['estimated_charge_usd']:,.2f} ({fee}).")
+    else:
+        print(f"\nFINAL: Done: keeping today's setup. Security {sec}. Audit cost ${e['agent_cost_usd']:,.2f}, "
+              f"billed ${e['estimated_charge_usd']:,.2f} ({fee}).")
 
 
 def main():
@@ -236,7 +251,8 @@ def main():
     bl = sub.add_parser("bill", help="bill the customer in Flexprice for this audit")
     bl.add_argument("customer_id", nargs="?", default=os.getenv("FLEXPRICE_CUSTOMER_ID", "demo-startup"))
     bl.add_argument("--agent-cost", type=float, default=0.0,
-                    help="what the audit cost in agent spend, in dollars (from Band's cost view)")
+                    help="extra cost on top of the measured GPU spend (e.g. agent LLM time), in dollars")
+    bl.add_argument("--audit-id", help="the Band room id: billing the same audit twice is refused")
     bl.set_defaults(fn=cmd_bill)
 
     args = p.parse_args()

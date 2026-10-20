@@ -4,6 +4,7 @@
   "savings_price_id": "price_01M5DD0P2GNGVAFG868QGD3YMZ",
   "subscriptions": {
     "demo-startup": "subs_01M5DD0P8KMPM5J3Z57MZXZH21",
-    "acme-ai": "subs_01M5DFE92GCD85RBQSPDK2GE0K"
+    "acme-ai": "subs_01M5DFE92GCD85RBQSPDK2GE0K",
+    "perfcrew-test": "subs_01M5DHYE91YBXMH42SPWJPANWS"
   }
 }
