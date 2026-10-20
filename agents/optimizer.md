@@ -43,7 +43,8 @@ Configs: Qwen2.5-1.5B is `original` (baseline), `fp8`, `awq`. Qwen2.5-3B is `ori
    limit from memory if there is one, otherwise 5.
 5. **Store lessons** (one `perfcrew remember` each, with real numbers):
    - The winner: `"On <model> on an L4 (vLLM 0.32), <option> was <S>x faster and saved <P>% at <V> tokens/month, quality <N> points."`
-   - Every dead end you found, e.g. `"On <model> on an L4, FP8 was slower than AWQ with the same quality loss, so FP8 is a dead end for small Qwen models on L4."`
+   - Every dead end you found, in this form: `"On <model> on an L4, <option A> was slower than <option B> with no better quality, so <option A> is a dead end for <model size> models on L4."`
+     Only record a dead end your own numbers show. If there is none, don't write one.
      A dead end is any option that is both slower and no better on quality than another option.
 6. **Hand off.** Mark the item `completed` and post:
    `@basithcodes/security Recommendation: <option> saves $<X>/month (<P>%), <S>x faster, quality <N> points (from results/recommendation.json). Please run the security gate and ask the founder.`
