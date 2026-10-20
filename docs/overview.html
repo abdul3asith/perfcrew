@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PerfCrew Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --void:#04050d; --ink:#eef1ff; --dim:#8f98bf; --faint:#3a4166; --edge:rgba(140,160,255,.16);
+    --band:#7c8cff; --cognee:#5ef2ff; --snyk:#ff5fd2; --flex:#ffd166; --ok:#3dff9a; }
+  * { box-sizing:border-box; margin:0; }
+  body { width:1600px; height:1000px; background:
+      radial-gradient(900px 500px at 15% 10%, rgba(124,140,255,.16), transparent 60%),
+      radial-gradient(800px 500px at 90% 90%, rgba(94,242,255,.10), transparent 60%),
+      radial-gradient(600px 400px at 85% 15%, rgba(255,95,210,.08), transparent 60%), var(--void);
+    color:var(--ink); font-family:"Space Grotesk",sans-serif; padding:44px 56px; overflow:hidden; }
+  .kicker { font-family:"JetBrains Mono",monospace; font-size:13px; letter-spacing:.3em; text-transform:uppercase; color:var(--dim); }
+  .kicker b { color:var(--cognee); font-weight:500; }
+  h1 { font-size:46px; font-weight:600; letter-spacing:-.02em; margin:8px 0 6px;
+    background:linear-gradient(90deg,#fff 0%,#c3ccff 50%,var(--cognee) 100%); -webkit-background-clip:text; color:transparent; }
+  .lede { font-size:18px; color:var(--dim); max-width:1100px; }
+  .lede b { color:var(--ink); font-weight:500; }
+
+  .flow { display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:18px; margin-top:34px; position:relative; }
+  .card { background:rgba(14,18,42,.62); border:1px solid var(--edge); border-radius:18px; padding:22px 22px 20px; position:relative; overflow:hidden; }
+  .card::before { content:""; position:absolute; inset:0 0 auto 0; height:3px; background:var(--c); box-shadow:0 0 24px var(--c); }
+  .num { font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--c); letter-spacing:.2em; }
+  .tool { font-size:26px; font-weight:600; margin:6px 0 2px; }
+  .role { font-size:15px; color:var(--c); margin-bottom:14px; }
+  .card ul { list-style:none; padding:0; }
+  .card li { font-size:14.5px; line-height:1.45; color:#c9cfee; padding-left:16px; position:relative; margin:7px 0; }
+  .card li::before { content:""; position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--c); box-shadow:0 0 8px var(--c); }
+  .card li b { color:#fff; font-weight:500; }
+
+  .loop { margin-top:22px; display:flex; align-items:center; gap:10px; font-family:"JetBrains Mono",monospace; font-size:13.5px; color:var(--dim); flex-wrap:wrap; }
+  .step { padding:7px 12px; border:1px solid var(--edge); border-radius:999px; background:rgba(14,18,42,.5); color:var(--ink); }
+  .arrow { color:var(--faint); }
+
+  .runs { display:grid; grid-template-columns: 1fr 1fr 1.05fr; gap:18px; margin-top:24px; }
+  .run { background:rgba(14,18,42,.62); border:1px solid var(--edge); border-radius:18px; padding:20px 22px; }
+  .run h3 { font-size:14px; font-family:"JetBrains Mono",monospace; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); font-weight:500; margin-bottom:10px; }
+  .big { font-size:40px; font-weight:600; letter-spacing:-.02em; }
+  .big small { font-size:18px; color:var(--dim); font-weight:400; }
+  .meta { font-size:14.5px; color:#c9cfee; margin-top:6px; line-height:1.5; }
+  .meta b { color:#fff; font-weight:500; }
+  .diff li { font-size:14.5px; color:#c9cfee; margin:8px 0; list-style:none; padding-left:22px; position:relative; line-height:1.4; }
+  .diff li::before { content:"→"; position:absolute; left:0; color:var(--ok); }
+  .diff li b { color:#fff; font-weight:500; }
+  .ok { color:var(--ok); }
+  footer { position:absolute; bottom:28px; left:56px; right:56px; display:flex; justify-content:space-between; font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--faint); letter-spacing:.08em; }
+</style>
+</head>
+<body>
+  <div class="kicker"><b>PerfCrew</b> &nbsp;·&nbsp; AI performance-engineering team</div>
+  <h1>Cut your inference bill. Safely. And remember why.</h1>
+  <p class="lede">Three AI agents work in one <b>Band</b> room: they benchmark cheaper ways to serve your model on a real GPU, pass a <b>Snyk</b> security gate, get the founder's OK, bill through <b>Flexprice</b>, and store every lesson in <b>Cognee</b>, so each audit is smarter than the last.</p>
+
+  <div class="flow">
+    <div class="card" style="--c:var(--band)">
+      <div class="num">01 · WHERE THE TEAM WORKS</div>
+      <div class="tool">Band</div>
+      <div class="role">The room, the board, the human</div>
+      <ul>
+        <li><b>3 agents, 2 runtimes</b>: Lead + Security (Claude Code), Optimizer (Codex)</li>
+        <li>Hand off by <b>@mention with the numbers</b>; no copy-paste</li>
+        <li><b>5 work items</b> move across the shared board</li>
+        <li>Founder <b>approves in one click</b>; agents never approve themselves</li>
+      </ul>
+    </div>
+    <div class="card" style="--c:var(--cognee)">
+      <div class="num">02 · WHAT THE TEAM KNOWS</div>
+      <div class="tool">Cognee</div>
+      <div class="role">Long-term memory, two knowledge graphs</div>
+      <ul>
+        <li><b>recall</b> before acting, quoted in the room</li>
+        <li><b>remember</b> lessons, findings and founder decisions</li>
+        <li><b>improve</b> caught a real conflict between two lessons</li>
+        <li><b>forget</b> stale benchmarks; a <b>3D memory map</b> shows recall paths</li>
+      </ul>
+    </div>
+    <div class="card" style="--c:var(--snyk)">
+      <div class="num">03 · WHAT KEEPS IT SAFE</div>
+      <div class="tool">Snyk</div>
+      <div class="role">Security gate before anything ships</div>
+      <ul>
+        <li><b>Blocks</b> high-severity pins (aiohttp 3.9.1: 17 high)</li>
+        <li>Scans the <b>real vLLM image</b>: 205 packages</li>
+        <li>Found transformers + torch risks with <b>mitigations</b></li>
+        <li>Code scan of our own source: <b>clean</b></li>
+      </ul>
+    </div>
+    <div class="card" style="--c:var(--flex)">
+      <div class="num">04 · HOW IT MAKES MONEY</div>
+      <div class="tool">Flexprice</div>
+      <div class="role">Usage-based billing on results</div>
+      <ul>
+        <li><b>First audit free</b>, then <b>$199</b> per audit</li>
+        <li>Plus <b>10% of verified monthly savings</b></li>
+        <li>Measured GPU cost per audit tracked for margin</li>
+        <li>Billed <b>once per audit</b>, enforced</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="loop">
+    <span class="step">Founder asks</span><span class="arrow">→</span>
+    <span class="step">Lead recalls + plans</span><span class="arrow">→</span>
+    <span class="step">Optimizer benchmarks on Modal GPU</span><span class="arrow">→</span>
+    <span class="step">Security gate</span><span class="arrow">→</span>
+    <span class="step">Founder approves</span><span class="arrow">→</span>
+    <span class="step">Bill + remember</span><span class="arrow">↺</span>
+    <span class="step" style="border-color:rgba(94,242,255,.4);color:var(--cognee)">next audit starts smarter</span>
+  </div>
+
+  <div class="runs">
+    <div class="run">
+      <h3>Run 1 · cold memory · Qwen2.5-1.5B</h3>
+      <div class="big">$1,880<small>/month saved</small></div>
+      <div class="meta">Quarter-size model: <b>26% cheaper</b>, 1.35× faster, quality <b>-3.3 points</b>. Snyk <b>blocked</b> aiohttp 3.9.1, fixed it, stored the finding.</div>
+    </div>
+    <div class="run">
+      <h3>Run 2 · warm memory · Qwen2.5-3B</h3>
+      <div class="big">$4,620<small>/month saved</small></div>
+      <div class="meta">Quarter-size model: <b>35% cheaper</b>, 1.54× faster, quality <b>±0 points</b>. Audit cost <b>$0.09</b> GPU, billed <b>$462</b>.</div>
+    </div>
+    <div class="run">
+      <h3>What memory changed</h3>
+      <ul class="diff">
+        <li>Lead and Optimizer <b>quoted run 1's lessons</b> before acting</li>
+        <li>Security <b>pinned the fixed aiohttp before scanning</b>: <span class="ok">PASS first time</span>, no block</li>
+        <li>Optimizer <b>recalled the founder's approved trade-off</b> (about 3.3 points) before choosing</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer><span>All numbers measured live: vLLM on a Modal L4 · 200B tokens/month · $0.80/GPU-hour</span><span>github.com/abdul3asith/perfcrew</span></footer>
+</body>
+</html>
