@@ -6,11 +6,15 @@
 """
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import env  # noqa: E402,F401  (loads .env so defaults like FLEXPRICE_CUSTOMER_ID apply)
+
 RESULTS = ROOT / "results"
 BASELINE = "original"
 DEFAULT_TOKENS_PER_MONTH = 200e9  # editable: a startup serving ~200B tokens/month
@@ -26,10 +30,8 @@ def cmd_bench(args):
 def load_results():
     out = {}
     for f in sorted(RESULTS.glob("*.json")):
-        if f.stem == "recommendation":
-            continue
         r = json.loads(f.read_text())
-        if "error" not in r:
+        if "tokens_per_sec" in r and "error" not in r:  # benchmark results only
             out[r["config"]] = r
     return out
 
@@ -148,10 +150,18 @@ def cmd_fix(args):
     print("Run `python tools/perfcrew.py scan` to confirm PASS.")
 
 
-def stub(name):
-    def run(args):
-        sys.exit(f"`{name}` is not implemented yet (coming in a later phase).")
-    return run
+def cmd_bill(args):
+    import billing
+    billing.setup(args.customer_id)
+    rec = json.loads((RESULTS / "recommendation.json").read_text())
+    e = billing.bill(args.customer_id, args.agent_cost, rec)
+    fee = "first audit free" if e["audit_fee_usd"] == 0 else f"${e['audit_fee_usd']} audit fee"
+    print(f"Audit cost ${e['agent_cost_usd']:,.2f}, saves ${e['monthly_savings_usd']:,.0f}/month, "
+          f"billed: audit_run x1, verified_savings ${e['monthly_savings_usd']:,.0f}, "
+          f"agent_cost ${e['agent_cost_usd']:,.2f}")
+    print(f"Customer pays ${e['estimated_charge_usd']:,.2f} this audit ({fee} + "
+          f"{billing.SAVINGS_SHARE:.0%} of savings), our margin ${e['margin_usd']:,.2f}. "
+          f"Audit #{e['audit_number']} for {args.customer_id}, id {e['audit_id']}.")
 
 
 def main():
@@ -197,10 +207,11 @@ def main():
     fx.add_argument("--reseed", action="store_true", help="demo: put the vulnerable pin back")
     fx.set_defaults(fn=cmd_fix)
 
-    for name in ["bill"]:
-        s = sub.add_parser(name, help="(later phase)")
-        s.add_argument("rest", nargs="*")
-        s.set_defaults(fn=stub(name))
+    bl = sub.add_parser("bill", help="bill the customer in Flexprice for this audit")
+    bl.add_argument("customer_id", nargs="?", default=os.getenv("FLEXPRICE_CUSTOMER_ID", "demo-startup"))
+    bl.add_argument("--agent-cost", type=float, default=0.0,
+                    help="what the audit cost in agent spend, in dollars (from Band's cost view)")
+    bl.set_defaults(fn=cmd_bill)
 
     args = p.parse_args()
     sys.exit(args.fn(args) or 0)
