@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PerfCrew Memory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": {
+  "three": "https://esm.sh/three@0.185.1",
+  "three/": "https://esm.sh/three@0.185.1/"
+} }
+</script>
+<style>
+  :root {
+    --void: #02030a;
+    --ink: #e8ecff;
+    --ink-dim: #8a93b8;
+    --ink-faint: #4b5275;
+    --glass: rgba(12, 16, 38, 0.55);
+    --glass-edge: rgba(140, 160, 255, 0.14);
+    --perf: #5ef2ff;
+    --sec: #ff5fd2;
+    --conflict: #ff4d5e;
+    --gold: #ffd166;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --sans: "Space Grotesk", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--void); color: var(--ink); font-family: var(--sans); overflow: hidden; }
+  #graph { position: fixed; inset: 0; }
+  .vignette { position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 45%, transparent 45%, rgba(2,3,10,0.85) 100%); }
+  .scan { position: fixed; inset: 0; pointer-events: none; opacity: .06;
+    background: repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 3px); mix-blend-mode: overlay; }
+
+  .panel { position: fixed; background: var(--glass); border: 1px solid var(--glass-edge); border-radius: 16px;
+    backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.02) inset, 0 20px 60px rgba(0,0,0,0.45); }
+
+  /* Header */
+  header { position: fixed; top: 22px; left: 26px; pointer-events: none; }
+  .brand { font-family: var(--mono); font-size: 11px; letter-spacing: .32em; color: var(--ink-dim); text-transform: uppercase; }
+  .brand b { color: var(--perf); font-weight: 500; }
+  h1 { margin: 6px 0 2px; font-size: 34px; font-weight: 600; letter-spacing: -.02em;
+    background: linear-gradient(90deg, #fff 0%, #b8c4ff 45%, var(--perf) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { font-size: 13px; color: var(--ink-dim); }
+  .sub .live { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #3dff9a; margin-right: 6px;
+    box-shadow: 0 0 10px #3dff9a; animation: pulse 2s infinite; vertical-align: 1px; }
+  @keyframes pulse { 50% { opacity: .35; } }
+
+  .stats { position: fixed; top: 112px; left: 26px; display: flex; gap: 10px; }
+  .stat { position: relative; padding: 10px 14px; min-width: 104px; }
+  .stat .n { font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .stat .l { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-dim); }
+  .stat.conflict { cursor: pointer; border-color: rgba(255,77,94,.35); }
+  .stat.conflict .n { color: var(--conflict); text-shadow: 0 0 18px rgba(255,77,94,.7); }
+  .stat.conflict:hover { background: rgba(60,10,20,.55); }
+
+  /* Left: datasets */
+  #datasets { top: 196px; left: 26px; width: 300px; max-height: calc(100vh - 300px); overflow: auto; padding: 16px; }
+  .ds { margin-bottom: 18px; }
+  .ds:last-child { margin-bottom: 0; }
+  .ds-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; }
+  .orb { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+  .ds-name { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  .ds-desc { font-size: 12px; color: var(--ink-dim); margin: -4px 0 10px 22px; }
+  .bar { display: grid; grid-template-columns: 112px 1fr 26px; gap: 8px; align-items: center; font-size: 12px; margin: 5px 0; }
+  .bar .t { color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar .track { height: 4px; border-radius: 4px; background: rgba(255,255,255,.06); overflow: hidden; }
+  .bar .fill { display: block; height: 100%; border-radius: 4px; }
+  .bar .c { font-family: var(--mono); font-size: 11px; color: var(--ink); text-align: right; }
+
+  /* Right: ask */
+  #ask { top: 22px; right: 26px; width: 380px; padding: 18px; max-height: calc(100vh - 150px); display: flex; flex-direction: column; }
+  .kicker { font-family: var(--mono); font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 4px; }
+  #ask h2 { margin: 0 0 12px; font-size: 18px; font-weight: 600; }
+  .q { display: block; width: 100%; text-align: left; font: inherit; font-size: 13px; color: var(--ink); cursor: pointer;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
+    transition: border-color .2s, background .2s, transform .2s; }
+  .q:hover { background: rgba(255,255,255,.06); transform: translateX(-2px); }
+  .q .tag { font-family: var(--mono); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; display: block; margin-bottom: 3px; }
+  .q.active { border-color: currentColor; box-shadow: 0 0 24px -6px currentColor; }
+  #answer { margin-top: 6px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.07); overflow: auto; min-height: 0; display: none; }
+  #answer .meta { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 8px; }
+  #answer .meta b { color: var(--gold); font-weight: 500; }
+  #answer .text { font-size: 14px; line-height: 1.55; white-space: pre-wrap; }
+  #answer .text strong { color: #fff; }
+  .caret { display: inline-block; width: 7px; height: 15px; background: var(--perf); vertical-align: -2px; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .reset { margin-top: 10px; align-self: flex-start; font: inherit; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--ink-dim);
+    background: none; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; padding: 6px 12px; cursor: pointer; display: none; }
+  .reset:hover { color: var(--ink); border-color: rgba(255,255,255,.3); }
+
+  /* Bottom: replay */
+  #replay { left: 50%; transform: translateX(-50%); bottom: 22px; width: min(720px, calc(100vw - 52px)); padding: 12px 16px; display: flex; align-items: center; gap: 14px; }
+  #play { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(94,242,255,.5); background: rgba(94,242,255,.08); color: var(--perf);
+    cursor: pointer; display: grid; place-items: center; flex: none; box-shadow: 0 0 20px -4px rgba(94,242,255,.6); }
+  #play:hover { background: rgba(94,242,255,.18); }
+  .rp-label { flex: none; }
+  .rp-label .kicker { margin: 0; }
+  .rp-label .clock { font-family: var(--mono); font-size: 13px; }
+  #scrub { flex: 1; accent-color: var(--perf); }
+  .rp-count { font-family: var(--mono); font-size: 12px; color: var(--ink-dim); flex: none; min-width: 74px; text-align: right; }
+
+  /* Legend */
+  #legend { left: 26px; bottom: 22px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 14px; max-width: 300px; font-size: 11px; color: var(--ink-dim); }
+  #legend span { display: inline-flex; align-items: center; gap: 6px; }
+  #legend i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  /* Tooltip */
+  #tip { position: fixed; pointer-events: none; max-width: 340px; padding: 10px 12px; font-size: 12.5px; line-height: 1.45; display: none; z-index: 10; }
+  #tip .pill { font-family: var(--mono); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px;
+    border: 1px solid currentColor; display: inline-block; margin-bottom: 6px; }
+  #tip .nm { font-weight: 600; margin-bottom: 3px; }
+  #tip .tx { color: var(--ink-dim); }
+
+  #fallback { position: fixed; inset: 0; display: none; place-items: center; text-align: center; color: var(--ink-dim); }
+
+  @media (max-width: 1100px) { #datasets, #legend { display: none; } #ask { width: 320px; } .stats { flex-wrap: wrap; max-width: 260px; } }
+</style>
+</head>
+<body>
+<div id="graph"></div>
+<div class="vignette"></div>
+<div class="scan"></div>
+
+<header>
+  <div class="brand"><b>PerfCrew</b> &nbsp;·&nbsp; Team memory</div>
+  <h1>What the crew has learned</h1>
+  <div class="sub"><span class="live"></span>Cognee knowledge graph · exported <span id="gen"></span></div>
+</header>
+
+<div class="stats">
+  <div class="panel stat"><div class="n" id="s-mem">0</div><div class="l">Lessons</div></div>
+  <div class="panel stat"><div class="n" id="s-ent">0</div><div class="l">Entities</div></div>
+  <div class="panel stat"><div class="n" id="s-rel">0</div><div class="l">Relations</div></div>
+  <div class="panel stat conflict" id="s-conf-card" title="Contradictions Cognee found while improving memory"><div class="n" id="s-conf">0</div><div class="l">Conflicts caught</div></div>
+</div>
+
+<aside class="panel" id="datasets"></aside>
+
+<aside class="panel" id="ask">
+  <div class="kicker">Recall · live paths</div>
+  <h2>Ask the memory</h2>
+  <div id="questions"></div>
+  <div id="answer"><div class="meta"></div><div class="text"></div></div>
+  <button class="reset" id="reset">← Show everything</button>
+</aside>
+
+<div class="panel" id="legend"></div>
+
+<div class="panel" id="replay">
+  <button id="play" aria-label="Replay how memory grew">
+    <svg width="14" height="14" viewBox="0 0 14 14"><path id="play-icon" d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>
+  </button>
+  <div class="rp-label"><div class="kicker">Replay learning</div><div class="clock" id="clock">—</div></div>
+  <input type="range" id="scrub" min="0" max="1000" value="1000" aria-label="Memory timeline">
+  <div class="rp-count" id="rp-count"></div>
+</div>
+
+<div class="panel" id="tip"></div>
+<div id="fallback"><div><h2>Memory map needs WebGL</h2><p>Open this file in a recent Chrome, Edge, Safari or Firefox.</p></div></div>
+
+<script type="module">
+import * as THREE from "three";
+import ForceGraph3D from "https://esm.sh/3d-force-graph@1.80.0?deps=three@0.185.1";
+import SpriteText from "https://esm.sh/three-spritetext@1.10.0?deps=three@0.185.1";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+
+const DATA = /*__PERFCREW_DATA__*/null;
+await document.fonts.ready;  // canvas labels need the web fonts loaded first
+
+// ---------- palette ----------
+const DS = {
+  perf_lore:     { label: "Performance lore", color: "#5ef2ff", desc: "Benchmarks, dead ends, founder decisions", x: -105 },
+  security_lore: { label: "Security lore",    color: "#ff5fd2", desc: "Snyk findings and vulnerable packages",   x:  105 },
+};
+const ENTITY = {
+  model: "#7cf8ff", hardware: "#ffb547", software: "#9d8bff", concept: "#5effa8", person: "#ffd166",
+  event: "#ff8f6b", vulnerability: "#ff4d5e", "vulnerability type": "#ff7a90", "software version": "#c38bff",
+  organization: "#6bb6ff", system: "#7aa2ff",
+};
+const KIND = {
+  DocumentChunk:        { label: "Lesson",            color: "#cfd8ff", size: 4.6 },
+  TextSummary:          { label: "Summary",           color: "#7f8fd8", size: 2.2 },
+  TextDocument:         { label: "Source",            color: "#4b5578", size: 1.6 },
+  EntityType:           { label: "Type",              color: "#59618a", size: 1.4 },
+  GlobalContextSummary: { label: "Context index",     color: "#3a4aa0", size: 7.5 },
+  FactConflict:         { label: "Conflict",          color: "#ff4d5e", size: 6.5 },
+};
+const colorOf = n => n.type === "Entity" ? (ENTITY[n.entity_type] || "#c9d2ff") : (KIND[n.type]?.color || "#8a93b8");
+const kindLabel = n => n.type === "Entity" ? (n.entity_type || "entity") : (KIND[n.type]?.label || n.type);
+const clip = (s, n) => (s || "").length > n ? s.slice(0, n - 1) + "…" : (s || "");
+const prettyName = n => {
+  if (n.type === "DocumentChunk") return clip(n.text || n.name, 110);
+  if (n.type === "TextSummary" || n.type === "GlobalContextSummary" || n.type === "FactConflict") return clip(n.text || n.name, 110);
+  return n.name;
+};
+
+// ---------- data ----------
+if (!DATA) throw new Error("No data embedded: run `perfcrew graph`.");
+const nodes = [], links = [], byId = new Map();
+for (const [ds, d] of Object.entries(DATA.datasets)) {
+  for (const n of d.nodes) { const m = { ...n, ds }; nodes.push(m); byId.set(n.id, m); }
+  for (const l of d.links) if (byId.has(l.source) && byId.has(l.target)) links.push({ ...l, ds });
+}
+const adj = new Map(nodes.map(n => [n.id, new Set()]));
+links.forEach(l => { adj.get(l.source).add(l.target); adj.get(l.target).add(l.source); });
+
+// When did each node join memory? Own timestamp, else the earliest linked memory's.
+const t0 = n => (n.t_created ? +n.t_created : null);
+nodes.forEach(n => n.t = t0(n));
+for (let pass = 0; pass < 4; pass++) nodes.forEach(n => {
+  if (n.t != null) return;
+  let best = null; adj.get(n.id).forEach(id => { const t = byId.get(id).t; if (t != null && (best == null || t < best)) best = t; });
+  if (best != null) n.t = best;
+});
+const times = nodes.map(n => n.t).filter(t => t != null);
+const tMin = Math.min(...times), tMax = Math.max(...times);
+nodes.forEach(n => { if (n.t == null) n.t = tMax; });
+
+// ---------- header + stats ----------
+document.getElementById("gen").textContent = new Date(DATA.generated_at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+const countUp = (el, to) => { const t = performance.now(); const f = now => { const k = Math.min(1, (now - t) / 1200);
+  el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); };
+countUp(document.getElementById("s-mem"), DATA.stats.memories);
+countUp(document.getElementById("s-ent"), DATA.stats.entities);
+countUp(document.getElementById("s-rel"), DATA.stats.relations);
+countUp(document.getElementById("s-conf"), DATA.stats.conflicts);
+
+// ---------- datasets panel (Cognee schema inventory) ----------
+const dsEl = document.getElementById("datasets");
+const SKIP = new Set(["TextDocument", "TextSummary", "EntityType", "GlobalContextSummary"]);
+for (const [ds, d] of Object.entries(DATA.datasets)) {
+  const meta = DS[ds]; const inv = (d.inventory || []).filter(i => !SKIP.has(i.type));
+  const max = Math.max(1, ...inv.map(i => i.count));
+  const rows = inv.slice(0, 8).map(i => {
+    const c = i.type === "DocumentChunk" ? "#f4f6ff" : i.type === "FactConflict" ? "#ff4d5e" : (ENTITY[i.type] || meta.color);
+    const name = i.type === "DocumentChunk" ? "lessons" : i.type === "FactConflict" ? "conflicts" : i.type;
+    return `<div class="bar"><span class="t">${name}</span><span class="track"><span class="fill" style="width:${100 * i.count / max}%;background:${c};box-shadow:0 0 8px ${c}"></span></span><span class="c">${i.count}</span></div>`;
+  }).join("");
+  dsEl.insertAdjacentHTML("beforeend", `<div class="ds"><div class="ds-head" data-ds="${ds}"><span class="orb" style="background:${meta.color};box-shadow:0 0 14px ${meta.color}"></span>
+    <span class="ds-name" style="color:${meta.color}">${meta.label}</span></div><div class="ds-desc">${meta.desc}</div>${rows || '<div class="ds-desc">Empty: nothing learned yet.</div>'}</div>`);
+}
+
+// ---------- legend ----------
+const usedTypes = [...new Set(nodes.filter(n => n.type === "Entity").map(n => n.entity_type))];
+document.getElementById("legend").innerHTML =
+  `<span><i style="background:#f4f6ff;box-shadow:0 0 8px #fff"></i>lesson</span>` +
+  usedTypes.map(t => `<span><i style="background:${ENTITY[t] || "#c9d2ff"}"></i>${t}</span>`).join("") +
+  (DATA.stats.conflicts ? `<span><i style="background:#ff4d5e;box-shadow:0 0 8px #ff4d5e"></i>conflict</span>` : "");
+
+// ---------- 3D scene ----------
+let G;
+try {
+  G = ForceGraph3D({ controlType: "orbit" })(document.getElementById("graph"));
+} catch (e) { document.getElementById("fallback").style.display = "grid"; throw e; }
+
+const state = { lit: null, visibleUntil: Infinity, hover: null };
+const isVisible = n => n.t <= state.visibleUntil;
+const isLit = n => !state.lit || state.lit.has(n.id);
+const linkLit = l => state.lit && state.lit.has(idOf(l.source)) && state.lit.has(idOf(l.target));
+const idOf = x => (typeof x === "object" ? x.id : x);
+
+const geo = {
+  sphere: new THREE.SphereGeometry(1, 24, 24),
+  crystal: new THREE.OctahedronGeometry(1.25, 0),
+  conflict: new THREE.IcosahedronGeometry(1.2, 0),
+  ring: new THREE.TorusGeometry(1.3, 0.18, 8, 32),
+  halo: new THREE.SphereGeometry(1, 24, 24),
+};
+function makeNode(n) {
+  const c = new THREE.Color(colorOf(n));
+  const group = new THREE.Group();
+  const size = n.type === "Entity" ? 3.2 + Math.min(4, (n.degree || 1) * 0.35) : (KIND[n.type]?.size || 2);
+  let g = geo.sphere;
+  if (n.type === "DocumentChunk") g = geo.crystal;
+  else if (n.type === "FactConflict") g = geo.conflict;
+  else if (n.type === "EntityType") g = geo.ring;
+  const mat = new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: n.type === "GlobalContextSummary" ? 0.16 : 0.95,
+    wireframe: n.type === "FactConflict" || n.type === "GlobalContextSummary" });
+  const core = new THREE.Mesh(g, mat); core.scale.setScalar(size); group.add(core);
+  if (n.type === "Entity" || n.type === "DocumentChunk" || n.type === "FactConflict") {
+    const halo = new THREE.Mesh(geo.halo, new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.05, depthWrite: false }));
+    halo.scale.setScalar(size * 2.1); group.add(halo);
+  }
+  if (n.type === "Entity") {
+    const label = new SpriteText(n.name.toUpperCase(), 3.4, "#ffffff");
+    label.fontFace = "'JetBrains Mono', monospace"; label.fontWeight = "500"; label.material.depthWrite = false;
+    label.material.opacity = 0.85; label.position.y = size + 4.2; group.add(label);
+  }
+  group.userData = { core, size, n, base: mat.opacity };
+  n.__obj = group;
+  return group;
+}
+
+G.backgroundColor("#02030a")
+  .showNavInfo(false)
+  .graphData({ nodes, links })
+  .nodeThreeObject(makeNode)
+  .nodeLabel(() => "")
+  .linkColor(l => linkLit(l) ? "#ffffff" : (DS[l.ds]?.color || "#8a93b8"))
+  .linkOpacity(0.22)
+  .linkWidth(l => linkLit(l) ? 0.9 : 0.25)
+  .linkDirectionalParticles(l => linkLit(l) ? 4 : (l.relation === "contains" ? 1 : 0))
+  .linkDirectionalParticleWidth(l => linkLit(l) ? 2.4 : 1)
+  .linkDirectionalParticleSpeed(l => linkLit(l) ? 0.012 : 0.004)
+  .linkDirectionalParticleColor(l => linkLit(l) ? "#ffd166" : (DS[l.ds]?.color || "#fff"))
+  .linkVisibility(l => isVisible(byId.get(idOf(l.source))) && isVisible(byId.get(idOf(l.target))))
+  .nodeVisibility(n => isVisible(n))
+  .onNodeHover(onHover)
+  .onNodeClick(n => focusNodes(new Set([n.id, ...adj.get(n.id)]), n))
+  .cooldownTicks(220)
+  .d3VelocityDecay(0.32);
+
+// Two galaxies: pull each dataset toward its own center.
+G.d3Force("charge").strength(-55).distanceMax(160);
+nodes.forEach(n => { n.x = (DS[n.ds]?.x || 0) + (Math.random() - .5) * 60; n.y = (Math.random() - .5) * 60; n.z = (Math.random() - .5) * 60; });
+G.d3Force("link").distance(l => (l.relation === "is_a" ? 18 : 32));
+const cluster = alpha => nodes.forEach(n => {
+  const cx = DS[n.ds]?.x || 0;
+  n.vx += (cx - n.x) * 0.22 * alpha; n.vy += (0 - n.y) * 0.04 * alpha; n.vz += (0 - n.z) * 0.04 * alpha;
+});
+G.d3Force("cluster", cluster);
+
+// Bloom
+try {
+  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.95, 0.5, 0.18);
+  G.postProcessingComposer().addPass(bloom);
+} catch (e) { console.warn("bloom unavailable", e); }
+
+// Starfield + dust
+const scene = G.scene();
+const stars = new THREE.BufferGeometry(); const N = 2600; const pos = new Float32Array(N * 3);
+for (let i = 0; i < N; i++) { const r = 900 + Math.random() * 1600, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+  pos.set([r * Math.sin(ph) * Math.cos(th), r * Math.sin(ph) * Math.sin(th), r * Math.cos(ph)], i * 3); }
+stars.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+const starField = new THREE.Points(stars, new THREE.PointsMaterial({ color: 0x9fb0ff, size: 1.6, sizeAttenuation: true, transparent: true, opacity: 0.7 }));
+scene.add(starField);
+scene.fog = new THREE.FogExp2(0x02030a, 0.0009);
+
+// Dataset titles floating above each galaxy
+for (const [ds, meta] of Object.entries(DS)) {
+  if (!DATA.datasets[ds]) continue;
+  const t = new SpriteText(meta.label.toUpperCase(), 7, meta.color);
+  t.fontFace = "'Space Grotesk', sans-serif"; t.fontWeight = "600"; t.material.depthWrite = false; t.material.opacity = 0.55;
+  t.position.set(meta.x, 95, 0); scene.add(t);
+}
+
+G.cameraPosition({ x: 0, y: 30, z: 430 });
+let idle = true, angle = 0;
+const controls = G.controls(); controls.autoRotate = false;
+G.renderer().domElement.addEventListener("pointerdown", () => { idle = false; });
+
+// Animate: gentle orbit, conflict heartbeat, lit pulse
+const clock = new THREE.Clock();
+let last = 0;
+(function tick() {
+  const t = clock.getElapsedTime();
+  const ease = 1 - Math.exp(-Math.min(0.5, t - last) * 9); last = t;  // time-based: same fade at any frame rate
+  starField.rotation.y = t * 0.004;
+  if (idle && !state.lit) { angle += 0.0012; const r = 430; G.cameraPosition({ x: r * Math.sin(angle), y: 40 + 30 * Math.sin(angle * 0.7), z: r * Math.cos(angle) }); }
+  for (const n of nodes) {
+    const o = n.__obj; if (!o) continue;
+    const { core, size, base } = o.userData;
+    const lit = isLit(n);
+    const target = lit ? base : 0.06;
+    core.material.opacity += (target - core.material.opacity) * ease;
+    o.children.forEach(ch => { if (ch !== core && ch.material) ch.material.opacity += ((lit ? (ch.isSprite ? 0.85 : (state.lit ? 0.03 : 0.05)) : 0.0) - ch.material.opacity) * ease; });
+    if (n.type === "FactConflict") { const s = size * (1 + 0.18 * Math.sin(t * 4)); core.scale.setScalar(s); core.rotation.x = t * 0.8; core.rotation.y = t * 0.6; }
+    else if (n.type === "DocumentChunk") core.rotation.y = t * 0.5;
+    if (state.lit && lit && n.type !== "GlobalContextSummary") core.scale.setScalar(size * (1.05 + 0.07 * Math.sin(t * 5)));
+    else if (n.type !== "FactConflict") core.scale.setScalar(size);
+  }
+  requestAnimationFrame(tick);
+})();
+
+// ---------- hover ----------
+const tip = document.getElementById("tip");
+addEventListener("pointermove", e => { tip.style.left = Math.min(e.clientX + 16, innerWidth - 360) + "px"; tip.style.top = (e.clientY + 16) + "px"; });
+function onHover(n) {
+  document.body.style.cursor = n ? "pointer" : "";
+  if (!n) { tip.style.display = "none"; return; }
+  const c = colorOf(n);
+  tip.innerHTML = `<span class="pill" style="color:${c}">${kindLabel(n)} · ${DS[n.ds].label}</span>
+    <div class="nm">${escapeHtml(prettyName(n))}</div>
+    ${n.text && n.type !== "DocumentChunk" && n.text !== n.name ? `<div class="tx">${escapeHtml(clip(n.text, 260))}</div>` : ""}`;
+  tip.style.display = "block";
+}
+const escapeHtml = s => (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// ---------- focus / recall paths ----------
+function refreshLinks() { G.linkColor(G.linkColor()).linkWidth(G.linkWidth()).linkDirectionalParticles(G.linkDirectionalParticles()); }
+function flyTo(set) {
+  const pts = [...set].map(id => byId.get(id)).filter(n => n && n.x != null);
+  if (!pts.length) return;
+  const c = pts.reduce((a, n) => ({ x: a.x + n.x / pts.length, y: a.y + n.y / pts.length, z: a.z + n.z / pts.length }), { x: 0, y: 0, z: 0 });
+  const spread = Math.max(60, ...pts.map(n => Math.hypot(n.x - c.x, n.y - c.y, n.z - c.z)));
+  const d = spread * 2.2 + 120;
+  G.cameraPosition({ x: c.x + d * 0.35, y: c.y + d * 0.2, z: c.z + d }, c, 1600);
+}
+function focusNodes(set, single) {
+  idle = false; state.lit = set; refreshLinks(); flyTo(set);
+  document.getElementById("reset").style.display = "inline-block";
+  if (single) showAnswer(`${kindLabel(single)} · ${set.size - 1} connections`, prettyName(single) + (single.text && single.text !== single.name && single.type !== "DocumentChunk" ? "\n\n" + single.text : ""), colorOf(single), true);
+}
+function resetView() {
+  state.lit = null; refreshLinks(); document.querySelectorAll(".q").forEach(b => b.classList.remove("active"));
+  document.getElementById("answer").style.display = "none"; document.getElementById("reset").style.display = "none";
+  G.cameraPosition({ x: 0, y: 30, z: 430 }, { x: 0, y: 0, z: 0 }, 1400); idle = true; angle = 0;
+}
+document.getElementById("reset").onclick = resetView;
+
+let typing = null;
+function showAnswer(meta, text, color, instant) {
+  const box = document.getElementById("answer"); box.style.display = "block";
+  box.querySelector(".meta").innerHTML = meta;
+  const out = box.querySelector(".text"); clearInterval(typing);
+  const html = s => escapeHtml(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  if (instant) { out.innerHTML = html(text); return; }
+  let i = 0; out.innerHTML = '<span class="caret"></span>';
+  typing = setInterval(() => { i += 3; out.innerHTML = html(text.slice(0, i)) + (i < text.length ? `<span class="caret" style="background:${color}"></span>` : "");
+    if (i >= text.length) clearInterval(typing); }, 16);
+}
+
+const qEl = document.getElementById("questions");
+for (const [ds, d] of Object.entries(DATA.datasets)) for (const q of d.questions || []) {
+  const b = document.createElement("button"); b.className = "q"; b.style.color = DS[ds].color;
+  b.innerHTML = `<span class="tag">${DS[ds].label}</span><span style="color:var(--ink)">${escapeHtml(q.question)}</span>`;
+  b.onclick = () => {
+    document.querySelectorAll(".q").forEach(x => x.classList.remove("active")); b.classList.add("active");
+    const set = new Set(q.node_ids.filter(id => byId.has(id)));
+    focusNodes(set);
+    showAnswer(`Cognee recall · <b>${set.size} memories</b> lit on the path`, q.answer || "(nothing relevant)", DS[ds].color);
+  };
+  qEl.appendChild(b);
+}
+
+// Conflict card → fly to the conflict(s)
+document.getElementById("s-conf-card").onclick = () => {
+  const conf = nodes.filter(n => n.type === "FactConflict"); if (!conf.length) return;
+  const set = new Set(conf.flatMap(n => [n.id, ...adj.get(n.id)]));
+  focusNodes(set);
+  showAnswer(`improve() · <b>${conf.length} conflict${conf.length > 1 ? "s" : ""}</b> caught`, conf.map(n => n.text || n.name).join("\n\n"), "#ff4d5e");
+};
+document.querySelectorAll(".ds-head").forEach(h => h.onclick = () => {
+  const ds = h.dataset.ds; focusNodes(new Set(nodes.filter(n => n.ds === ds).map(n => n.id)));
+});
+
+// ---------- replay ----------
+const scrub = document.getElementById("scrub"), clockEl = document.getElementById("clock"), countEl = document.getElementById("rp-count");
+const fmt = t => new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+function setTime(k) {
+  state.visibleUntil = k >= 1000 ? Infinity : tMin + (tMax - tMin) * (k / 1000);
+  const vis = nodes.filter(isVisible); const lessons = vis.filter(n => n.type === "DocumentChunk").length;
+  clockEl.textContent = k >= 1000 ? "now" : fmt(state.visibleUntil);
+  countEl.textContent = `${lessons} lesson${lessons === 1 ? "" : "s"}`;
+  G.nodeVisibility(G.nodeVisibility()).linkVisibility(G.linkVisibility());
+}
+scrub.oninput = () => { stopPlay(); setTime(+scrub.value); };
+let playing = null;
+const icon = document.getElementById("play-icon");
+function stopPlay() { clearInterval(playing); playing = null; icon.setAttribute("d", "M3 1.5v11l9-5.5z"); }
+document.getElementById("play").onclick = () => {
+  if (playing) return stopPlay();
+  resetView(); let k = 0; setTime(0); scrub.value = 0; icon.setAttribute("d", "M3 1.5h3v11H3zM8 1.5h3v11H8z");
+  playing = setInterval(() => { k += 6; scrub.value = Math.min(k, 1000); setTime(Math.min(k, 1000)); if (k >= 1000) stopPlay(); }, 40);
+};
+setTime(1000);
+// Deep links for the demo: #q=0 opens a recall path, #conflict the conflict, #replay plays the timeline.
+setTimeout(() => {
+  const h = location.hash.slice(1);
+  if (h.startsWith("q=")) document.querySelectorAll(".q")[+h.slice(2)]?.click();
+  else if (h === "conflict") document.getElementById("s-conf-card").click();
+  else if (h === "replay") document.getElementById("play").click();
+}, 2500);
+addEventListener("resize", () => G.width(innerWidth).height(innerHeight));
+addEventListener("keydown", e => { if (e.key === "Escape") resetView(); });
+</script>
+</body>
+</html>

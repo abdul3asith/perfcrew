@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PerfCrew Memory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": {
+  "three": "https://esm.sh/three@0.185.1",
+  "three/": "https://esm.sh/three@0.185.1/"
+} }
+</script>
+<style>
+  :root {
+    --void: #02030a;
+    --ink: #e8ecff;
+    --ink-dim: #8a93b8;
+    --ink-faint: #4b5275;
+    --glass: rgba(12, 16, 38, 0.55);
+    --glass-edge: rgba(140, 160, 255, 0.14);
+    --perf: #5ef2ff;
+    --sec: #ff5fd2;
+    --conflict: #ff4d5e;
+    --gold: #ffd166;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --sans: "Space Grotesk", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--void); color: var(--ink); font-family: var(--sans); overflow: hidden; }
+  #graph { position: fixed; inset: 0; }
+  .vignette { position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 45%, transparent 45%, rgba(2,3,10,0.85) 100%); }
+  .scan { position: fixed; inset: 0; pointer-events: none; opacity: .06;
+    background: repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 3px); mix-blend-mode: overlay; }
+
+  .panel { position: fixed; background: var(--glass); border: 1px solid var(--glass-edge); border-radius: 16px;
+    backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.02) inset, 0 20px 60px rgba(0,0,0,0.45); }
+
+  /* Header */
+  header { position: fixed; top: 22px; left: 26px; pointer-events: none; }
+  .brand { font-family: var(--mono); font-size: 11px; letter-spacing: .32em; color: var(--ink-dim); text-transform: uppercase; }
+  .brand b { color: var(--perf); font-weight: 500; }
+  h1 { margin: 6px 0 2px; font-size: 34px; font-weight: 600; letter-spacing: -.02em;
+    background: linear-gradient(90deg, #fff 0%, #b8c4ff 45%, var(--perf) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { font-size: 13px; color: var(--ink-dim); }
+  .sub .live { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #3dff9a; margin-right: 6px;
+    box-shadow: 0 0 10px #3dff9a; animation: pulse 2s infinite; vertical-align: 1px; }
+  @keyframes pulse { 50% { opacity: .35; } }
+
+  .stats { position: fixed; top: 112px; left: 26px; display: flex; gap: 10px; }
+  .stat { position: relative; padding: 10px 14px; min-width: 104px; }
+  .stat .n { font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .stat .l { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-dim); }
+  .stat.conflict { cursor: pointer; border-color: rgba(255,77,94,.35); }
+  .stat.conflict .n { color: var(--conflict); text-shadow: 0 0 18px rgba(255,77,94,.7); }
+  .stat.conflict:hover { background: rgba(60,10,20,.55); }
+
+  /* Left: datasets */
+  #datasets { top: 196px; left: 26px; width: 300px; max-height: calc(100vh - 300px); overflow: auto; padding: 16px; }
+  .ds { margin-bottom: 18px; }
+  .ds:last-child { margin-bottom: 0; }
+  .ds-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; }
+  .orb { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+  .ds-name { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  .ds-desc { font-size: 12px; color: var(--ink-dim); margin: -4px 0 10px 22px; }
+  .bar { display: grid; grid-template-columns: 112px 1fr 26px; gap: 8px; align-items: center; font-size: 12px; margin: 5px 0; }
+  .bar .t { color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar .track { height: 4px; border-radius: 4px; background: rgba(255,255,255,.06); overflow: hidden; }
+  .bar .fill { display: block; height: 100%; border-radius: 4px; }
+  .bar .c { font-family: var(--mono); font-size: 11px; color: var(--ink); text-align: right; }
+
+  /* Right: ask */
+  #ask { top: 22px; right: 26px; width: 380px; padding: 18px; max-height: calc(100vh - 150px); display: flex; flex-direction: column; }
+  .kicker { font-family: var(--mono); font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 4px; }
+  #ask h2 { margin: 0 0 12px; font-size: 18px; font-weight: 600; }
+  .q { display: block; width: 100%; text-align: left; font: inherit; font-size: 13px; color: var(--ink); cursor: pointer;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
+    transition: border-color .2s, background .2s, transform .2s; }
+  .q:hover { background: rgba(255,255,255,.06); transform: translateX(-2px); }
+  .q .tag { font-family: var(--mono); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; display: block; margin-bottom: 3px; }
+  .q.active { border-color: currentColor; box-shadow: 0 0 24px -6px currentColor; }
+  #answer { margin-top: 6px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.07); overflow: auto; min-height: 0; display: none; }
+  #answer .meta { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 8px; }
+  #answer .meta b { color: var(--gold); font-weight: 500; }
+  #answer .text { font-size: 14px; line-height: 1.55; white-space: pre-wrap; }
+  #answer .text strong { color: #fff; }
+  .caret { display: inline-block; width: 7px; height: 15px; background: var(--perf); vertical-align: -2px; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .reset { margin-top: 10px; align-self: flex-start; font: inherit; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--ink-dim);
+    background: none; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; padding: 6px 12px; cursor: pointer; display: none; }
+  .reset:hover { color: var(--ink); border-color: rgba(255,255,255,.3); }
+
+  /* Bottom: replay */
+  #replay { left: 50%; transform: translateX(-50%); bottom: 22px; width: min(720px, calc(100vw - 52px)); padding: 12px 16px; display: flex; align-items: center; gap: 14px; }
+  #play { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(94,242,255,.5); background: rgba(94,242,255,.08); color: var(--perf);
+    cursor: pointer; display: grid; place-items: center; flex: none; box-shadow: 0 0 20px -4px rgba(94,242,255,.6); }
+  #play:hover { background: rgba(94,242,255,.18); }
+  .rp-label { flex: none; }
+  .rp-label .kicker { margin: 0; }
+  .rp-label .clock { font-family: var(--mono); font-size: 13px; }
+  #scrub { flex: 1; accent-color: var(--perf); }
+  .rp-count { font-family: var(--mono); font-size: 12px; color: var(--ink-dim); flex: none; min-width: 74px; text-align: right; }
+
+  /* Legend */
+  #legend { left: 26px; bottom: 22px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 6px 14px; max-width: 300px; font-size: 11px; color: var(--ink-dim); }
+  #legend span { display: inline-flex; align-items: center; gap: 6px; }
+  #legend i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  /* Tooltip */
+  #tip { position: fixed; pointer-events: none; max-width: 340px; padding: 10px 12px; font-size: 12.5px; line-height: 1.45; display: none; z-index: 10; }
+  #tip .pill { font-family: var(--mono); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px;
+    border: 1px solid currentColor; display: inline-block; margin-bottom: 6px; }
+  #tip .nm { font-weight: 600; margin-bottom: 3px; }
+  #tip .tx { color: var(--ink-dim); }
+
+  #fallback { position: fixed; inset: 0; display: none; place-items: center; text-align: center; color: var(--ink-dim); }
+
+  @media (max-width: 1100px) { #datasets, #legend { display: none; } #ask { width: 320px; } .stats { flex-wrap: wrap; max-width: 260px; } }
+</style>
+</head>
+<body>
+<div id="graph"></div>
+<div class="vignette"></div>
+<div class="scan"></div>
+
+<header>
+  <div class="brand"><b>PerfCrew</b> &nbsp;·&nbsp; Team memory</div>
+  <h1>What the crew has learned</h1>
+  <div class="sub"><span class="live"></span>Cognee knowledge graph · exported <span id="gen"></span></div>
+</header>
+
+<div class="stats">
+  <div class="panel stat"><div class="n" id="s-mem">0</div><div class="l">Lessons</div></div>
+  <div class="panel stat"><div class="n" id="s-ent">0</div><div class="l">Entities</div></div>
+  <div class="panel stat"><div class="n" id="s-rel">0</div><div class="l">Relations</div></div>
+  <div class="panel stat conflict" id="s-conf-card" title="Contradictions Cognee found while improving memory"><div class="n" id="s-conf">0</div><div class="l">Conflicts caught</div></div>
+</div>
+
+<aside class="panel" id="datasets"></aside>
+
+<aside class="panel" id="ask">
+  <div class="kicker">Recall · live paths</div>
+  <h2>Ask the memory</h2>
+  <div id="questions"></div>
+  <div id="answer"><div class="meta"></div><div class="text"></div></div>
+  <button class="reset" id="reset">← Show everything</button>
+</aside>
+
+<div class="panel" id="legend"></div>
+
+<div class="panel" id="replay">
+  <button id="play" aria-label="Replay how memory grew">
+    <svg width="14" height="14" viewBox="0 0 14 14"><path id="play-icon" d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>
+  </button>
+  <div class="rp-label"><div class="kicker">Replay learning</div><div class="clock" id="clock">—</div></div>
+  <input type="range" id="scrub" min="0" max="1000" value="1000" aria-label="Memory timeline">
+  <div class="rp-count" id="rp-count"></div>
+</div>
+
+<div class="panel" id="tip"></div>
+<div id="fallback"><div><h2>Memory map needs WebGL</h2><p>Open this file in a recent Chrome, Edge, Safari or Firefox.</p></div></div>
+
+<script type="module">
+import * as THREE from "three";
+import ForceGraph3D from "https://esm.sh/3d-force-graph@1.80.0?deps=three@0.185.1";
+import SpriteText from "https://esm.sh/three-spritetext@1.10.0?deps=three@0.185.1";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+
+const DATA = {"generated_at": "2026-10-20T20:56:42+00:00", "stats": {"memories": 6, "entities": 14, "relations": 91, "conflicts": 1}, "datasets": {"perf_lore": {"nodes": [{"id": "2d7339f5-7081-5a23-af7b-4ccf3db89e3c", "name": "This chunk is about: - Models: Qwen2.5-1.5B - Quantization: AWQ - Hardware: NVIDIA L4 - Software: vLLM 0.32 - Topics: in", "type": "TextSummary", "entity_type": "TextSummary", "text": "This chunk is about: - Models: Qwen2.5-1.5B - Quantization: AWQ - Hardware: NVIDIA L4 - Software: vLLM 0.32 - Topics: inference speed, cost savings, quality tradeoffs. Facts: - AWQ quantization was applied to Qwen2.5-1.5B running on an L4 GPU with vLLM 0.32. - AWQ made Qwen2.5-1.5B 1.34x faster on the L4 with vLLM 0.32. - At 200B tokens per month, AWQ saved 25% for Qwen2.5-1.5B on the L4 with vLLM 0.32. - AWQ reduced Qwen2.5-1.5B quality by 3.3 points on the L4 with vLLM 0.32.", "t_created": 1792528733051, "degree": 2, "importance": 0.3877619350384901, "source_task": "extract_graph_and_summarize"}, {"id": "5bbdcc20-9590-540b-acc6-29645ee7a65d", "name": "On Qwen2.5-1.5B on an L4 (vLLM 0.32), AWQ was 1.34x faster and saved 25% at 200B tokens/month, quality -3.3 points.", "type": "DocumentChunk", "entity_type": "DocumentChunk", "text": "On Qwen2.5-1.5B on an L4 (vLLM 0.32), AWQ was 1.34x faster and saved 25% at 200B tokens/month, quality -3.3 points.", "t_created": 1792528727589, "degree": 7, "importance": 0.733951626354678, "source_task": "extract_chunks_from_documents"}, {"id": "642b3212-ed70-40b8-bbb6-cd196f3dc446", "name": "text_fb4c2460cb6e97666c3a4b6d894fbd95", "type": "TextDocument", "entity_type": "TextDocument", "text": null, "t_created": 1792528727580, "degree": 1, "importance": 0.244650542118226, "source_task": "classify_documents"}, {"id": "65198407-5b70-58c0-bf5f-f1eac834217f", "name": "qwen2.5-1.5b", "type": "Entity", "entity_type": "model", "text": null, "t_created": 1792529258297, "degree": 13, "importance": 0.931471445717889, "source_task": "extract_graph_from_data"}, {"id": "219b163a-c39b-5565-a57c-a39a9b7c95ef", "name": "model", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792529258297, "degree": 1, "importance": 0.244650542118226, "source_task": "extract_graph_from_data"}, {"id": "ec3caf7a-c89c-58f6-acee-d76549304ae5", "name": "l4", "type": "Entity", "entity_type": "hardware", "text": null, "t_created": 1792529163703, "degree": 8, "importance": 0.7755238700769802, "source_task": "extract_graph_from_data"}, {"id": "8c552c98-6a7a-5ef6-8ed3-2e367a6fae21", "name": "hardware", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792529163703, "degree": 1, "importance": 0.244650542118226, "source_task": "extract_graph_from_data"}, {"id": "5dc0b1a6-a5b6-5e1e-9eb5-da109fed275a", "name": "vllm 0.32", "type": "Entity", "entity_type": "software", "text": null, "t_created": 1792528762638, "degree": 4, "importance": 0.5680609671737329, "source_task": "extract_graph_from_data"}, {"id": "db1727e8-d176-5a1d-8d34-7ab008d4a3a0", "name": "software", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792528762638, "degree": 1, "importance": 0.244650542118226, "source_task": "extract_graph_from_data"}, {"id": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "name": "awq", "type": "Entity", "entity_type": "concept", "text": null, "t_created": 1792529258297, "degree": 16, "importance": 1.0, "source_task": "extract_graph_from_data"}, {"id": "ecef9a1f-57fb-5b3b-83ce-3fa7db5054cf", "name": "method", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792528752978, "degree": 2, "importance": 0.3877619350384901, "source_task": "extract_graph_from_data"}, {"id": "ac4338f9-12d1-52b4-b122-13ecebf10452", "name": "This chunk is about: - Models: Qwen2.5-1.5B - Hardware: NVIDIA L4 - Quantization methods: FP8, AWQ - Concepts: inference", "type": "TextSummary", "entity_type": "TextSummary", "text": "This chunk is about: - Models: Qwen2.5-1.5B - Hardware: NVIDIA L4 - Quantization methods: FP8, AWQ - Concepts: inference speed, output quality. Facts: - On Qwen2.5-1.5B running on an L4, FP8 quantization was slower than AWQ quantization. - On Qwen2.5-1.5B running on an L4, FP8 quantization gave no better quality than AWQ. - The author concludes that FP8 is a dead end for 1.5B models on an L4.", "t_created": 1792528752783, "degree": 2, "importance": 0.3877619350384901, "source_task": "extract_graph_and_summarize"}, {"id": "a7560caa-65ac-5904-b6a1-8374e4e51cae", "name": "On Qwen2.5-1.5B on an L4, FP8 was slower than AWQ with no better quality, so FP8 is a dead end for 1.5B models on L4.", "type": "DocumentChunk", "entity_type": "DocumentChunk", "text": "On Qwen2.5-1.5B on an L4, FP8 was slower than AWQ with no better quality, so FP8 is a dead end for 1.5B models on L4.", "t_created": 1792528748525, "degree": 7, "importance": 0.733951626354678, "source_task": "extract_chunks_from_documents"}, {"id": "f7f0ad09-e248-4387-a165-04b118b46cd2", "name": "text_9c221fe22637481ec4d639fedb7230f3", "type": "TextDocument", "entity_type": "TextDocument", "text": null, "t_created": 1792528748516, "degree": 1, "importance": 0.244650542118226, "source_task": "classify_documents"}, {"id": "b2454c76-2d4c-5be6-bd17-a68d2e802df7", "name": "fp8", "type": "Entity", "entity_type": "concept", "text": null, "t_created": 1792529163703, "degree": 8, "importance": 0.7755238700769802, "source_task": "extract_graph_from_data"}, {"id": "d268061f-c7f8-596d-ad58-f9ab8bf56e2b", "name": "1.5b models on l4", "type": "Entity", "entity_type": "concept", "text": null, "t_created": 1792528752978, "degree": 3, "importance": 0.489301084236452, "source_task": "extract_graph_from_data"}, {"id": "d2a381fa-3658-5ca6-ada9-2109cfc9331d", "name": "concept", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792529258297, "degree": 3, "importance": 0.489301084236452, "source_task": "extract_graph_from_data"}, {"id": "8ab70465-7699-5935-b616-2af1803b0992", "name": "This chunk is about: - Models: Qwen2.5-1.5B - Hardware: NVIDIA L4 GPU - Systems: vLLM 0.32 - Concepts: AWQ quantization,", "type": "TextSummary", "entity_type": "TextSummary", "text": "This chunk is about:\n- Models: Qwen2.5-1.5B\n- Hardware: NVIDIA L4 GPU\n- Systems: vLLM 0.32\n- Concepts: AWQ quantization, inference speed, cost savings, output quality\n\nFacts:\n- AWQ quantization was tested on Qwen2.5-1.5B running on an L4 GPU with vLLM 0.32.\n- AWQ quantization made Qwen2.5-1.5B 1.35x faster on an L4 GPU with vLLM 0.32.\n- At 200B tokens per month, AWQ quantization of Qwen2.5-1.5B on an L4 GPU with vLLM 0.32 saved 26%.\n- AWQ quantization of Qwen2.5-1.5B on an L4 GPU with vLLM 0.32 lowered quality by 3.3 points.", "t_created": 1792528762681, "degree": 2, "importance": 0.3877619350384901, "source_task": "extract_graph_and_summarize"}, {"id": "734f7fab-b525-5dea-87b9-149ddb4c3dc0", "name": "On Qwen2.5-1.5B on an L4 (vLLM 0.32), AWQ was 1.35x faster and saved 26% at 200B tokens/month, quality -3.3 points.", "type": "DocumentChunk", "entity_type": "DocumentChunk", "text": "On Qwen2.5-1.5B on an L4 (vLLM 0.32), AWQ was 1.35x faster and saved 26% at 200B tokens/month, quality -3.3 points.", "t_created": 1792528757475, "degree": 7, "importance": 0.733951626354678, "source_task": "extract_chunks_from_documents"}, {"id": "9d5ed329-099f-4a89-86a5-6d8b84872d6d", "name": "text_5996adb94d428cf09501bffe50123126", "type": "TextDocument", "entity_type": "TextDocument", "text": null, "t_created": 1792528757467, "degree": 1, "importance": 0.244650542118226, "source_task": "classify_documents"}, {"id": "27bf95ff-682a-5957-a31a-5e5244c9a852", "name": "technique", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792528762638, "degree": 1, "importance": 0.244650542118226, "source_task": "extract_graph_from_data"}, {"id": "b0bef52d-eed1-546d-bfa5-cbfec2af84e2", "name": "This chunk is about a founder decision on quantization for the Qwen2.5-1.5B model on L4 GPUs. This chunk is about: - Dec", "type": "TextSummary", "entity_type": "TextSummary", "text": "This chunk is about a founder decision on quantization for the Qwen2.5-1.5B model on L4 GPUs.\n\nThis chunk is about:\n- Decisions: Founder approval of AWQ\n- Models: Qwen2.5-1.5B\n- Systems: L4 GPU, AWQ, FP8\n- Topics: Cost savings, quality, security review\n\nFacts:\n- The founder approved AWQ (compressed) for the Qwen2.5-1.5B model on the L4 GPU.\n- AWQ saves $1,880 per month, a 26% cost reduction for the Qwen2.5-1.5B deployment on L4.\n- AWQ quality is 3.4 points lower for the Qwen2.5-1.5B model on L4.\n- The AWQ deployment of Qwen2.5-1.5B on L4 passed the security review.\n- FP8 is a dead end for Qwen2.5-1.5B on L4 because it is slower than AWQ.\n- FP8 costs $640 per month more than AWQ for Qwen2.5-1.5B on L4 at matching quality.", "t_created": 1792529165708, "degree": 2, "importance": 0.3877619350384901, "source_task": "extract_graph_and_summarize"}, {"id": "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "name": "Founder decision: Founder approved AWQ (compressed) for Qwen2.5-1.5B on L4: saves $1,880/month (26%) with quality 3.4 po", "type": "DocumentChunk", "entity_type": "DocumentChunk", "text": "Founder decision: Founder approved AWQ (compressed) for Qwen2.5-1.5B on L4: saves $1,880/month (26%) with quality 3.4 points lower. Security PASS. FP8 is a dead end (slower and $640/month more than AWQ at matching quality).", "t_created": 1792529160150, "degree": 9, "importance": 0.812711509291959, "source_task": "extract_chunks_from_documents"}, {"id": "316290c9-4847-41c1-889f-0f05b17a4675", "name": "text_c3099b8dd53c21786b7d662426d10697", "type": "TextDocument", "entity_type": "TextDocument", "text": null, "t_created": 1792529160140, "degree": 1, "importance": 0.244650542118226, "source_task": "classify_documents"}, {"id": "26d9fe40-7e5c-530c-8322-5a08a9b8be7d", "name": "founder", "type": "Entity", "entity_type": "person", "text": null, "t_created": 1792529258297, "degree": 4, "importance": 0.5680609671737329, "source_task": "extract_graph_from_data"}, {"id": "99a82eec-bb35-5bb5-9ed2-e73fc7a756de", "name": "person", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792529258297, "degree": 1, "importance": 0.244650542118226, "source_task": "extract_graph_from_data"}, {"id": "89c630cf-b272-5aaf-81e3-64579fdd03a5", "name": "security review", "type": "Entity", "entity_type": "event", "text": null, "t_created": 1792529163704, "degree": 3, "importance": 0.489301084236452, "source_task": "extract_graph_from_data"}, {"id": "214abcd9-9adf-5c8a-bb35-1e729f2d68c3", "name": "event", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792529163704, "degree": 1, "importance": 0.244650542118226, "source_task": "extract_graph_from_data"}, {"id": "aa0ee606-75d0-5628-b5bb-0a596e899c46", "name": "AWQ's benchmark results on Qwen2.5-1.5B conflict: speedup is given as 1.35x and as 1.34x, savings at 200B tokens per mon", "type": "FactConflict", "entity_type": "FactConflict", "text": "AWQ's benchmark results on Qwen2.5-1.5B conflict: speedup is given as 1.35x and as 1.34x, savings at 200B tokens per month as 26% and as 25%, monthly savings as $1,860 and as $1,880, and quality change as -3.3 and as -3.4 points, and nothing orders these values, so they cannot all be true.", "t_created": 1792529307366, "degree": 6, "importance": 0.686820903599663, "source_task": null}, {"id": "0407a714-e3c6-5419-bb2d-c643fa07f12d", "name": "This area of the dataset is about: - Models: Qwen2.5-1.5B - Hardware: NVIDIA L4 GPU - Quantization methods: AWQ, FP8 - R", "type": "GlobalContextSummary", "entity_type": "GlobalContextSummary", "text": "This area of the dataset is about: - Models: Qwen2.5-1.5B - Hardware: NVIDIA L4 GPU - Quantization methods: AWQ, FP8 - Roles: Founder - Concepts: inference speed, output quality, cost savings, security review. Facts: - On Qwen2.5-1.5B running on an L4, FP8 quantization was slower than AWQ and gave no better output quality than AWQ. - The author concluded that FP8 is a dead end for 1.5B models on an L4. - The founder approved AWQ (compressed) for the Qwen2.5-1.5B model on the L4 GPU. - The AWQ deployment of Qwen2.5-1.5B on L4 passed the security review. - AWQ saves $1,880 per month, a 26% cost reduction for the Qwen2.5-1.5B deployment on L4, according to one input; another input reports $1,860 per month. - AWQ lowers quality by 3.4 points for Qwen2.5-1.5B on L4, according to one input; another input reports 3.3 points. - FP8 costs $640 per month more than AWQ for Qwen2.5-1.5B on L4 at matching quality.", "t_created": 1792529314029, "degree": 4, "importance": 0.5680609671737329, "source_task": null}, {"id": "343b983d-9145-56d1-8e2a-f9f3735d48e2", "name": "This area of the dataset is about: - Models: Qwen2.5-1.5B - Quantization: AWQ - Hardware: NVIDIA L4 GPU - Software: vLLM", "type": "GlobalContextSummary", "entity_type": "GlobalContextSummary", "text": "This area of the dataset is about: - Models: Qwen2.5-1.5B - Quantization: AWQ - Hardware: NVIDIA L4 GPU - Software: vLLM 0.32 - Topics: inference speed, cost savings, output quality tradeoffs. Facts: - Applying AWQ quantization to Qwen2.5-1.5B on an NVIDIA L4 GPU with vLLM 0.32 made inference 1.34x faster in one report and 1.35x faster in another. - At 200B tokens per month, AWQ quantization of Qwen2.5-1.5B on an NVIDIA L4 GPU with vLLM 0.32 saved 25% in one report and 26% in another. - AWQ quantization of Qwen2.5-1.5B on an NVIDIA L4 GPU with vLLM 0.32 lowered output quality by 3.3 points.", "t_created": 1792529195186, "degree": 3, "importance": 0.489301084236452, "source_task": null}, {"id": "800882fd-a488-5418-87f3-a390a09e68c8", "name": "This dataset is about: - Models: Qwen2.5-1.5B - Hardware: NVIDIA L4 GPU - Software: vLLM 0.32 - Quantization methods: AW", "type": "GlobalContextSummary", "entity_type": "GlobalContextSummary", "text": "This dataset is about: - Models: Qwen2.5-1.5B - Hardware: NVIDIA L4 GPU - Software: vLLM 0.32 - Quantization methods: AWQ, FP8 - Roles: Founder - Concepts: inference speed, output quality, cost savings, security review. Facts: - AWQ quantization of Qwen2.5-1.5B on an NVIDIA L4 GPU with vLLM 0.32 made inference 1.34x to 1.35x faster. - AWQ quantization of Qwen2.5-1.5B on an NVIDIA L4 GPU with vLLM 0.32 lowered output quality by 3.3 to 3.4 points. - At 200B tokens per month, AWQ saved 25% to 26% on the Qwen2.5-1.5B deployment on the NVIDIA L4 GPU. - AWQ saves $1,860 to $1,880 per month, a 26% cost reduction, for the Qwen2.5-1.5B deployment on the L4. - FP8 quantization of Qwen2.5-1.5B on the L4 was slower than AWQ and gave no better output quality than AWQ. - FP8 costs $640 per month more than AWQ for Qwen2.5-1.5B on the L4 at matching quality. - The author concluded that FP8 is a dead end for 1.5B models on an L4. - The founder approved AWQ for the Qwen2.5-1.5B model on the L4 GPU, and the AWQ deployment passed the security review.", "t_created": 1792529319399, "degree": 2, "importance": 0.3877619350384901, "source_task": null}, {"id": "ba8d1251-9d5d-598c-8de3-076a13987f42", "name": "This chunk is about a founder decision to use AWQ quantization for the Qwen2.5-1.5B model, including its cost savings an", "type": "TextSummary", "entity_type": "TextSummary", "text": "This chunk is about a founder decision to use AWQ quantization for the Qwen2.5-1.5B model, including its cost savings and quality tradeoff.\n- Roles: Founder\n- Projects: Qwen2.5-1.5B AWQ deployment\n- Concepts: AWQ quantization, monthly cost savings, quality tradeoff\n- The founder approved using AWQ for Qwen2.5-1.5B.\n- The AWQ decision saves $1,860 per month.\n- The AWQ decision reduces quality by 3.3 points.", "t_created": 1792529255458, "degree": 2, "importance": 0.3877619350384901, "source_task": "extract_graph_and_summarize"}, {"id": "9f555aad-fe3c-5ca6-abd7-02e246831fe9", "name": "Founder decision: Founder approved awq for Qwen2.5-1.5B: saves $1,860/month with quality -3.3 points.", "type": "DocumentChunk", "entity_type": "DocumentChunk", "text": "Founder decision: Founder approved awq for Qwen2.5-1.5B: saves $1,860/month with quality -3.3 points.", "t_created": 1792529253141, "degree": 6, "importance": 0.686820903599663, "source_task": "extract_chunks_from_documents"}, {"id": "72e1896c-6581-4981-9f2f-2e715d8eefa9", "name": "text_e10455038b8fda5a2fef910ed31c6795", "type": "TextDocument", "entity_type": "TextDocument", "text": null, "t_created": 1792529253133, "degree": 1, "importance": 0.244650542118226, "source_task": "classify_documents"}], "links": [{"source": "2d7339f5-7081-5a23-af7b-4ccf3db89e3c", "target": "5bbdcc20-9590-540b-acc6-29645ee7a65d", "relation": "made_from"}, {"source": "2d7339f5-7081-5a23-af7b-4ccf3db89e3c", "target": "343b983d-9145-56d1-8e2a-f9f3735d48e2", "relation": "summarized_in"}, {"source": "5bbdcc20-9590-540b-acc6-29645ee7a65d", "target": "642b3212-ed70-40b8-bbb6-cd196f3dc446", "relation": "is_part_of"}, {"source": "5bbdcc20-9590-540b-acc6-29645ee7a65d", "target": "65198407-5b70-58c0-bf5f-f1eac834217f", "relation": "contains"}, {"source": "5bbdcc20-9590-540b-acc6-29645ee7a65d", "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5", "relation": "contains"}, {"source": "5bbdcc20-9590-540b-acc6-29645ee7a65d", "target": "5dc0b1a6-a5b6-5e1e-9eb5-da109fed275a", "relation": "contains"}, {"source": "5bbdcc20-9590-540b-acc6-29645ee7a65d", "target": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "relation": "contains"}, {"source": "65198407-5b70-58c0-bf5f-f1eac834217f", "target": "219b163a-c39b-5565-a57c-a39a9b7c95ef", "relation": "is_a"}, {"source": "65198407-5b70-58c0-bf5f-f1eac834217f", "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5", "relation": "runs_on"}, {"source": "65198407-5b70-58c0-bf5f-f1eac834217f", "target": "5dc0b1a6-a5b6-5e1e-9eb5-da109fed275a", "relation": "served_with"}, {"source": "65198407-5b70-58c0-bf5f-f1eac834217f", "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5", "relation": "evaluated_on"}, {"source": "65198407-5b70-58c0-bf5f-f1eac834217f", "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5", "relation": "deployed_on"}, {"source": "ec3caf7a-c89c-58f6-acee-d76549304ae5", "target": "8c552c98-6a7a-5ef6-8ed3-2e367a6fae21", "relation": "is_a"}, {"source": "5dc0b1a6-a5b6-5e1e-9eb5-da109fed275a", "target": "db1727e8-d176-5a1d-8d34-7ab008d4a3a0", "relation": "is_a"}, {"source": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "target": "ecef9a1f-57fb-5b3b-83ce-3fa7db5054cf", "relation": "is_a"}, {"source": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "target": "65198407-5b70-58c0-bf5f-f1eac834217f", "relation": "evaluated_on"}, {"source": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "target": "27bf95ff-682a-5957-a31a-5e5244c9a852", "relation": "is_a"}, {"source": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "target": "65198407-5b70-58c0-bf5f-f1eac834217f", "relation": "applied_to"}, {"source": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "target": "d2a381fa-3658-5ca6-ada9-2109cfc9331d", "relation": "is_a"}, {"source": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "target": "b2454c76-2d4c-5be6-bd17-a68d2e802df7", "relation": "preferred_over"}, {"source": "ac4338f9-12d1-52b4-b122-13ecebf10452", "target": "a7560caa-65ac-5904-b6a1-8374e4e51cae", "relation": "made_from"}, {"source": "ac4338f9-12d1-52b4-b122-13ecebf10452", "target": "0407a714-e3c6-5419-bb2d-c643fa07f12d", "relation": "summarized_in"}, {"source": "a7560caa-65ac-5904-b6a1-8374e4e51cae", "target": "f7f0ad09-e248-4387-a165-04b118b46cd2", "relation": "is_part_of"}, {"source": "a7560caa-65ac-5904-b6a1-8374e4e51cae", "target": "65198407-5b70-58c0-bf5f-f1eac834217f", "relation": "contains"}, {"source": "a7560caa-65ac-5904-b6a1-8374e4e51cae", "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5", "relation": "contains"}, {"source": "a7560caa-65ac-5904-b6a1-8374e4e51cae", "target": "b2454c76-2d4c-5be6-bd17-a68d2e802df7", "relation": "contains"}, {"source": "a7560caa-65ac-5904-b6a1-8374e4e51cae", "target": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "relation": "contains"}, {"source": "a7560caa-65ac-5904-b6a1-8374e4e51cae", "target": "d268061f-c7f8-596d-ad58-f9ab8bf56e2b", "relation": "contains"}, {"source": "b2454c76-2d4c-5be6-bd17-a68d2e802df7", "target": "ecef9a1f-57fb-5b3b-83ce-3fa7db5054cf", "relation": "is_a"}, {"source": "b2454c76-2d4c-5be6-bd17-a68d2e802df7", "target": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "relation": "slower_than"}, {"source": "b2454c76-2d4c-5be6-bd17-a68d2e802df7", "target": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "relation": "no_better_quality_than"}, {"source": "b2454c76-2d4c-5be6-bd17-a68d2e802df7", "target": "d268061f-c7f8-596d-ad58-f9ab8bf56e2b", "relation": "dead_end_for"}, {"source": "b2454c76-2d4c-5be6-bd17-a68d2e802df7", "target": "d2a381fa-3658-5ca6-ada9-2109cfc9331d", "relation": "is_a"}, {"source": "d268061f-c7f8-596d-ad58-f9ab8bf56e2b", "target": "d2a381fa-3658-5ca6-ada9-2109cfc9331d", "relation": "is_a"}, {"source": "8ab70465-7699-5935-b616-2af1803b0992", "target": "734f7fab-b525-5dea-87b9-149ddb4c3dc0", "relation": "made_from"}, {"source": "8ab70465-7699-5935-b616-2af1803b0992", "target": "343b983d-9145-56d1-8e2a-f9f3735d48e2", "relation": "summarized_in"}, {"source": "734f7fab-b525-5dea-87b9-149ddb4c3dc0", "target": "9d5ed329-099f-4a89-86a5-6d8b84872d6d", "relation": "is_part_of"}, {"source": "734f7fab-b525-5dea-87b9-149ddb4c3dc0", "target": "65198407-5b70-58c0-bf5f-f1eac834217f", "relation": "contains"}, {"source": "734f7fab-b525-5dea-87b9-149ddb4c3dc0", "target": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "relation": "contains"}, {"source": "734f7fab-b525-5dea-87b9-149ddb4c3dc0", "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5", "relation": "contains"}, {"source": "734f7fab-b525-5dea-87b9-149ddb4c3dc0", "target": "5dc0b1a6-a5b6-5e1e-9eb5-da109fed275a", "relation": "contains"}, {"source": "b0bef52d-eed1-546d-bfa5-cbfec2af84e2", "target": "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "relation": "made_from"}, {"source": "b0bef52d-eed1-546d-bfa5-cbfec2af84e2", "target": "0407a714-e3c6-5419-bb2d-c643fa07f12d", "relation": "summarized_in"}, {"source": "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "target": "316290c9-4847-41c1-889f-0f05b17a4675", "relation": "is_part_of"}, {"source": "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "target": "26d9fe40-7e5c-530c-8322-5a08a9b8be7d", "relation": "contains"}, {"source": "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "target": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "relation": "contains"}, {"source": "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "target": "65198407-5b70-58c0-bf5f-f1eac834217f", "relation": "contains"}, {"source": "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "target": "ec3caf7a-c89c-58f6-acee-d76549304ae5", "relation": "contains"}, {"source": "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "target": "b2454c76-2d4c-5be6-bd17-a68d2e802df7", "relation": "contains"}, {"source": "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "target": "89c630cf-b272-5aaf-81e3-64579fdd03a5", "relation": "contains"}, {"source": "26d9fe40-7e5c-530c-8322-5a08a9b8be7d", "target": "99a82eec-bb35-5bb5-9ed2-e73fc7a756de", "relation": "is_a"}, {"source": "26d9fe40-7e5c-530c-8322-5a08a9b8be7d", "target": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "relation": "approved"}, {"source": "89c630cf-b272-5aaf-81e3-64579fdd03a5", "target": "214abcd9-9adf-5c8a-bb35-1e729f2d68c3", "relation": "is_a"}, {"source": "89c630cf-b272-5aaf-81e3-64579fdd03a5", "target": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "relation": "passed"}, {"source": "aa0ee606-75d0-5628-b5bb-0a596e899c46", "target": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "relation": "conflict_about"}, {"source": "aa0ee606-75d0-5628-b5bb-0a596e899c46", "target": "65198407-5b70-58c0-bf5f-f1eac834217f", "relation": "conflict_value"}, {"source": "aa0ee606-75d0-5628-b5bb-0a596e899c46", "target": "5bbdcc20-9590-540b-acc6-29645ee7a65d", "relation": "conflict_cites"}, {"source": "aa0ee606-75d0-5628-b5bb-0a596e899c46", "target": "734f7fab-b525-5dea-87b9-149ddb4c3dc0", "relation": "conflict_cites"}, {"source": "aa0ee606-75d0-5628-b5bb-0a596e899c46", "target": "9f555aad-fe3c-5ca6-abd7-02e246831fe9", "relation": "conflict_cites"}, {"source": "aa0ee606-75d0-5628-b5bb-0a596e899c46", "target": "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "relation": "conflict_cites"}, {"source": "0407a714-e3c6-5419-bb2d-c643fa07f12d", "target": "800882fd-a488-5418-87f3-a390a09e68c8", "relation": "summarized_in"}, {"source": "343b983d-9145-56d1-8e2a-f9f3735d48e2", "target": "800882fd-a488-5418-87f3-a390a09e68c8", "relation": "summarized_in"}, {"source": "ba8d1251-9d5d-598c-8de3-076a13987f42", "target": "9f555aad-fe3c-5ca6-abd7-02e246831fe9", "relation": "made_from"}, {"source": "ba8d1251-9d5d-598c-8de3-076a13987f42", "target": "0407a714-e3c6-5419-bb2d-c643fa07f12d", "relation": "summarized_in"}, {"source": "9f555aad-fe3c-5ca6-abd7-02e246831fe9", "target": "72e1896c-6581-4981-9f2f-2e715d8eefa9", "relation": "is_part_of"}, {"source": "9f555aad-fe3c-5ca6-abd7-02e246831fe9", "target": "26d9fe40-7e5c-530c-8322-5a08a9b8be7d", "relation": "contains"}, {"source": "9f555aad-fe3c-5ca6-abd7-02e246831fe9", "target": "27dca2a8-be48-5b84-9278-c53ebf113a7b", "relation": "contains"}, {"source": "9f555aad-fe3c-5ca6-abd7-02e246831fe9", "target": "65198407-5b70-58c0-bf5f-f1eac834217f", "relation": "contains"}], "inventory": [{"type": "DocumentChunk", "count": 5, "samples": ["", "", "", "", ""], "relationships": [{"to_type": "concept", "relation": "contains", "count": 8}, {"to_type": "TextDocument", "relation": "is_part_of", "count": 5}, {"to_type": "TextSummary", "relation": "\u2190 made_from", "count": 5}, {"to_type": "model", "relation": "contains", "count": 5}, {"to_type": "FactConflict", "relation": "\u2190 conflict_cites", "count": 4}, {"to_type": "hardware", "relation": "contains", "count": 4}, {"to_type": "person", "relation": "contains", "count": 2}, {"to_type": "software", "relation": "contains", "count": 2}, {"to_type": "event", "relation": "contains", "count": 1}]}, {"type": "TextDocument", "count": 5, "samples": ["text_5996adb94d428cf09501bffe50123126", "text_9c221fe22637481ec4d639fedb7230f3", "text_c3099b8dd53c21786b7d662426d10697", "text_e10455038b8fda5a2fef910ed31c6795", "text_fb4c2460cb6e97666c3a4b6d894fbd95"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 is_part_of", "count": 5}]}, {"type": "TextSummary", "count": 5, "samples": ["", "", "", "", ""], "relationships": [{"to_type": "DocumentChunk", "relation": "made_from", "count": 5}, {"to_type": "GlobalContextSummary", "relation": "summarized_in", "count": 5}]}, {"type": "GlobalContextSummary", "count": 3, "samples": ["", "", ""], "relationships": [{"to_type": "TextSummary", "relation": "\u2190 summarized_in", "count": 5}, {"to_type": "GlobalContextSummary", "relation": "summarized_in", "count": 2}, {"to_type": "GlobalContextSummary", "relation": "\u2190 summarized_in", "count": 2}]}, {"type": "concept", "count": 3, "samples": ["awq", "fp8", "1.5b models on l4"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 contains", "count": 8}, {"to_type": "FactConflict", "relation": "\u2190 conflict_about", "count": 1}, {"to_type": "concept", "relation": "dead_end_for", "count": 1}, {"to_type": "concept", "relation": "no_better_quality_than", "count": 1}, {"to_type": "concept", "relation": "preferred_over", "count": 1}, {"to_type": "concept", "relation": "slower_than", "count": 1}, {"to_type": "concept", "relation": "\u2190 dead_end_for", "count": 1}, {"to_type": "concept", "relation": "\u2190 no_better_quality_than", "count": 1}, {"to_type": "concept", "relation": "\u2190 preferred_over", "count": 1}, {"to_type": "concept", "relation": "\u2190 slower_than", "count": 1}, {"to_type": "event", "relation": "\u2190 passed", "count": 1}, {"to_type": "model", "relation": "applied_to", "count": 1}, {"to_type": "model", "relation": "evaluated_on", "count": 1}, {"to_type": "person", "relation": "\u2190 approved", "count": 1}]}, {"type": "FactConflict", "count": 1, "samples": [""], "relationships": [{"to_type": "DocumentChunk", "relation": "conflict_cites", "count": 4}, {"to_type": "concept", "relation": "conflict_about", "count": 1}, {"to_type": "model", "relation": "conflict_value", "count": 1}]}, {"type": "event", "count": 1, "samples": ["security review"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 contains", "count": 1}, {"to_type": "concept", "relation": "passed", "count": 1}]}, {"type": "hardware", "count": 1, "samples": ["l4"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 contains", "count": 4}, {"to_type": "model", "relation": "\u2190 deployed_on", "count": 1}, {"to_type": "model", "relation": "\u2190 evaluated_on", "count": 1}, {"to_type": "model", "relation": "\u2190 runs_on", "count": 1}]}, {"type": "model", "count": 1, "samples": ["qwen2.5-1.5b"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 contains", "count": 5}, {"to_type": "FactConflict", "relation": "\u2190 conflict_value", "count": 1}, {"to_type": "concept", "relation": "\u2190 applied_to", "count": 1}, {"to_type": "concept", "relation": "\u2190 evaluated_on", "count": 1}, {"to_type": "hardware", "relation": "deployed_on", "count": 1}, {"to_type": "hardware", "relation": "evaluated_on", "count": 1}, {"to_type": "hardware", "relation": "runs_on", "count": 1}, {"to_type": "software", "relation": "served_with", "count": 1}]}, {"type": "person", "count": 1, "samples": ["founder"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 contains", "count": 2}, {"to_type": "concept", "relation": "approved", "count": 1}]}, {"type": "software", "count": 1, "samples": ["vllm 0.32"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 contains", "count": 2}, {"to_type": "model", "relation": "\u2190 served_with", "count": 1}]}], "questions": [{"question": "Which compressed model options are dead ends on an L4?", "answer": "FP8 is the dead end for Qwen2.5-1.5B on an L4: it was slower than AWQ with no better quality.", "node_ids": ["d268061f-c7f8-596d-ad58-f9ab8bf56e2b", "b0bef52d-eed1-546d-bfa5-cbfec2af84e2", "a7560caa-65ac-5904-b6a1-8374e4e51cae", "0407a714-e3c6-5419-bb2d-c643fa07f12d", "d2a381fa-3658-5ca6-ada9-2109cfc9331d", "b2454c76-2d4c-5be6-bd17-a68d2e802df7", "d61a0a4e-0680-50cb-8c25-d0efe35f2f58"]}, {"question": "What quality loss does the founder accept?", "answer": "The founder accepts a quality loss of **3.3 points** (one source says 3.4) from using AWQ on Qwen2.5-1.5B on L4.", "node_ids": ["26d9fe40-7e5c-530c-8322-5a08a9b8be7d", "9f555aad-fe3c-5ca6-abd7-02e246831fe9", "ba8d1251-9d5d-598c-8de3-076a13987f42", "aa0ee606-75d0-5628-b5bb-0a596e899c46", "99a82eec-bb35-5bb5-9ed2-e73fc7a756de", "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "27dca2a8-be48-5b84-9278-c53ebf113a7b", "72e1896c-6581-4981-9f2f-2e715d8eefa9", "65198407-5b70-58c0-bf5f-f1eac834217f"]}, {"question": "Which setup saved the most money, and by how much?", "answer": "AWQ on Qwen2.5-1.5B on an L4 saved the most, about **$1,880/month (26%)**, per the founder decision. Other sources give $1,860/month, so the exact figure is disputed.", "node_ids": ["26d9fe40-7e5c-530c-8322-5a08a9b8be7d", "9f555aad-fe3c-5ca6-abd7-02e246831fe9", "ba8d1251-9d5d-598c-8de3-076a13987f42", "aa0ee606-75d0-5628-b5bb-0a596e899c46", "99a82eec-bb35-5bb5-9ed2-e73fc7a756de", "d61a0a4e-0680-50cb-8c25-d0efe35f2f58", "27dca2a8-be48-5b84-9278-c53ebf113a7b", "72e1896c-6581-4981-9f2f-2e715d8eefa9", "65198407-5b70-58c0-bf5f-f1eac834217f"]}]}, "security_lore": {"nodes": [{"id": "b10e462f-a343-5699-a5c6-c97658f2f3b1", "name": "This chunk is about: Companies: Snyk; Systems: serving stack; Products: aiohttp; Security: vulnerabilities, CVE-2025-536", "type": "TextSummary", "entity_type": "TextSummary", "text": "This chunk is about: Companies: Snyk; Systems: serving stack; Products: aiohttp; Security: vulnerabilities, CVE-2025-53643, HTTP Request Smuggling; Topics: dependency pinning policy. Facts: - Snyk blocked aiohttp 3.9.1 in the serving stack. - Snyk reported 16 high and 27 medium severity issues in aiohttp 3.9.1. - aiohttp 3.9.1 has an HTTP Request Smuggling issue tracked as CVE-2025-53643. - The aiohttp CVE-2025-53643 issue is fixed in aiohttp 3.14.4. - The policy for the serving stack is to always pin aiohttp>=3.14.4 from the start. - The policy for the serving stack is to never use aiohttp 3.9.1.", "t_created": 1792528896528, "degree": 2, "importance": 0.5, "source_task": "extract_graph_and_summarize"}, {"id": "ebe5ecb6-bf36-5150-a24c-e6fffd143cae", "name": "Snyk blocked aiohttp 3.9.1 in the serving stack: 16 high, 27 medium severity issues, for example HTTP Request Smuggling ", "type": "DocumentChunk", "entity_type": "DocumentChunk", "text": "Snyk blocked aiohttp 3.9.1 in the serving stack: 16 high, 27 medium severity issues, for example HTTP Request Smuggling (CVE-2025-53643). Fixed in aiohttp 3.14.4. Always pin aiohttp>=3.14.4 from the start and never use 3.9.1.", "t_created": 1792528892689, "degree": 8, "importance": 1.0, "source_task": "extract_chunks_from_documents"}, {"id": "22dbfa8e-cfaf-4c58-9c11-65a1c81fcc9a", "name": "text_78c03e21afcbee160bd0bd65816e9926", "type": "TextDocument", "entity_type": "TextDocument", "text": null, "t_created": 1792528892680, "degree": 1, "importance": 0.3154648767857287, "source_task": "classify_documents"}, {"id": "b70d7e48-9e13-5065-a4c2-e0470f757013", "name": "snyk", "type": "Entity", "entity_type": "organization", "text": null, "t_created": 1792528899685, "degree": 4, "importance": 0.7324867603589634, "source_task": "extract_graph_from_data"}, {"id": "388f60fb-220d-55e8-ae9c-3ac93cead308", "name": "organization", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792528899685, "degree": 1, "importance": 0.3154648767857287, "source_task": "extract_graph_from_data"}, {"id": "0a46ba88-5cab-5252-9f95-cdd07430f7e5", "name": "aiohttp 3.9.1", "type": "Entity", "entity_type": "software version", "text": null, "t_created": 1792528899685, "degree": 5, "importance": 0.8154648767857287, "source_task": "extract_graph_from_data"}, {"id": "4555e74a-d43f-5739-b397-78eea85aca4a", "name": "software version", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792528899685, "degree": 2, "importance": 0.5, "source_task": "extract_graph_from_data"}, {"id": "8c733586-cccc-5c03-8b3f-0c844fab147e", "name": "cve-2025-53643", "type": "Entity", "entity_type": "vulnerability", "text": null, "t_created": 1792528899685, "degree": 5, "importance": 0.8154648767857287, "source_task": "extract_graph_from_data"}, {"id": "1e68661b-b39b-5759-aaa9-faa2e72dd019", "name": "vulnerability", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792528899685, "degree": 1, "importance": 0.3154648767857287, "source_task": "extract_graph_from_data"}, {"id": "4ef54d82-e26a-5eba-9a3b-b32f6d6c47c3", "name": "http request smuggling", "type": "Entity", "entity_type": "vulnerability type", "text": null, "t_created": 1792528899685, "degree": 3, "importance": 0.6309297535714574, "source_task": "extract_graph_from_data"}, {"id": "4468d34f-68b6-55b8-a833-824881370bbe", "name": "vulnerability type", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792528899685, "degree": 1, "importance": 0.3154648767857287, "source_task": "extract_graph_from_data"}, {"id": "9850d435-775f-52b2-b15f-440160cae344", "name": "serving stack", "type": "Entity", "entity_type": "system", "text": null, "t_created": 1792528899685, "degree": 4, "importance": 0.7324867603589634, "source_task": "extract_graph_from_data"}, {"id": "911002a8-437b-5559-b290-2f2ab442f3f9", "name": "system", "type": "EntityType", "entity_type": "EntityType", "text": null, "t_created": 1792528899685, "degree": 1, "importance": 0.3154648767857287, "source_task": "extract_graph_from_data"}, {"id": "858be91a-af19-589f-ad68-c616c7a00a9c", "name": "aiohttp 3.14.4", "type": "Entity", "entity_type": "software version", "text": null, "t_created": 1792528899685, "degree": 5, "importance": 0.8154648767857287, "source_task": "extract_graph_from_data"}, {"id": "6ac5f665-4aad-5969-a9d0-f5d7011c39b7", "name": "This area of the dataset is about: - Companies: Snyk - Systems: serving stack - Products: aiohttp - Security: CVE-2025-5", "type": "GlobalContextSummary", "entity_type": "GlobalContextSummary", "text": "This area of the dataset is about:\n- Companies: Snyk\n- Systems: serving stack\n- Products: aiohttp\n- Security: CVE-2025-53643, HTTP Request Smuggling\n- Topics: dependency pinning policy\n\nFacts:\n- Snyk reported 16 high and 27 medium severity issues in aiohttp 3.9.1.\n- Snyk blocked aiohttp 3.9.1 in the serving stack.\n- aiohttp 3.9.1 has an HTTP Request Smuggling issue tracked as CVE-2025-53643.\n- The CVE-2025-53643 issue in aiohttp is fixed in aiohttp 3.14.4.\n- The serving stack policy is to always pin aiohttp>=3.14.4 from the start and never use aiohttp 3.9.1.", "t_created": 1792529223119, "degree": 2, "importance": 0.5, "source_task": null}, {"id": "567008f0-9602-5ca9-9a44-c1974064cded", "name": "This dataset is about: - Companies: Snyk - Systems: serving stack - Products: aiohttp - Security: CVE-2025-53643, HTTP R", "type": "GlobalContextSummary", "entity_type": "GlobalContextSummary", "text": "This dataset is about:\n- Companies: Snyk\n- Systems: serving stack\n- Products: aiohttp\n- Security: CVE-2025-53643, HTTP Request Smuggling\n- Topics: dependency pinning policy\n\nFacts:\n- Snyk reported 16 high and 27 medium severity issues in aiohttp 3.9.1.\n- aiohttp 3.9.1 has an HTTP Request Smuggling issue tracked as CVE-2025-53643.\n- The CVE-2025-53643 issue in aiohttp is fixed in aiohttp 3.14.4.\n- Snyk blocked aiohttp 3.9.1 in the serving stack.\n- The serving stack policy is to always pin aiohttp>=3.14.4 from the start and never use aiohttp 3.9.1.", "t_created": 1792529226339, "degree": 1, "importance": 0.3154648767857287, "source_task": null}], "links": [{"source": "b10e462f-a343-5699-a5c6-c97658f2f3b1", "target": "ebe5ecb6-bf36-5150-a24c-e6fffd143cae", "relation": "made_from"}, {"source": "b10e462f-a343-5699-a5c6-c97658f2f3b1", "target": "6ac5f665-4aad-5969-a9d0-f5d7011c39b7", "relation": "summarized_in"}, {"source": "ebe5ecb6-bf36-5150-a24c-e6fffd143cae", "target": "22dbfa8e-cfaf-4c58-9c11-65a1c81fcc9a", "relation": "is_part_of"}, {"source": "ebe5ecb6-bf36-5150-a24c-e6fffd143cae", "target": "b70d7e48-9e13-5065-a4c2-e0470f757013", "relation": "contains"}, {"source": "ebe5ecb6-bf36-5150-a24c-e6fffd143cae", "target": "0a46ba88-5cab-5252-9f95-cdd07430f7e5", "relation": "contains"}, {"source": "ebe5ecb6-bf36-5150-a24c-e6fffd143cae", "target": "858be91a-af19-589f-ad68-c616c7a00a9c", "relation": "contains"}, {"source": "ebe5ecb6-bf36-5150-a24c-e6fffd143cae", "target": "9850d435-775f-52b2-b15f-440160cae344", "relation": "contains"}, {"source": "ebe5ecb6-bf36-5150-a24c-e6fffd143cae", "target": "8c733586-cccc-5c03-8b3f-0c844fab147e", "relation": "contains"}, {"source": "ebe5ecb6-bf36-5150-a24c-e6fffd143cae", "target": "4ef54d82-e26a-5eba-9a3b-b32f6d6c47c3", "relation": "contains"}, {"source": "b70d7e48-9e13-5065-a4c2-e0470f757013", "target": "388f60fb-220d-55e8-ae9c-3ac93cead308", "relation": "is_a"}, {"source": "b70d7e48-9e13-5065-a4c2-e0470f757013", "target": "0a46ba88-5cab-5252-9f95-cdd07430f7e5", "relation": "blocked"}, {"source": "b70d7e48-9e13-5065-a4c2-e0470f757013", "target": "9850d435-775f-52b2-b15f-440160cae344", "relation": "blocked_in"}, {"source": "0a46ba88-5cab-5252-9f95-cdd07430f7e5", "target": "4555e74a-d43f-5739-b397-78eea85aca4a", "relation": "is_a"}, {"source": "0a46ba88-5cab-5252-9f95-cdd07430f7e5", "target": "8c733586-cccc-5c03-8b3f-0c844fab147e", "relation": "affected_by"}, {"source": "8c733586-cccc-5c03-8b3f-0c844fab147e", "target": "1e68661b-b39b-5759-aaa9-faa2e72dd019", "relation": "is_a"}, {"source": "8c733586-cccc-5c03-8b3f-0c844fab147e", "target": "4ef54d82-e26a-5eba-9a3b-b32f6d6c47c3", "relation": "is_type"}, {"source": "4ef54d82-e26a-5eba-9a3b-b32f6d6c47c3", "target": "4468d34f-68b6-55b8-a833-824881370bbe", "relation": "is_a"}, {"source": "9850d435-775f-52b2-b15f-440160cae344", "target": "911002a8-437b-5559-b290-2f2ab442f3f9", "relation": "is_a"}, {"source": "9850d435-775f-52b2-b15f-440160cae344", "target": "858be91a-af19-589f-ad68-c616c7a00a9c", "relation": "must_pin"}, {"source": "858be91a-af19-589f-ad68-c616c7a00a9c", "target": "4555e74a-d43f-5739-b397-78eea85aca4a", "relation": "is_a"}, {"source": "858be91a-af19-589f-ad68-c616c7a00a9c", "target": "0a46ba88-5cab-5252-9f95-cdd07430f7e5", "relation": "replaces"}, {"source": "858be91a-af19-589f-ad68-c616c7a00a9c", "target": "8c733586-cccc-5c03-8b3f-0c844fab147e", "relation": "fixes"}, {"source": "6ac5f665-4aad-5969-a9d0-f5d7011c39b7", "target": "567008f0-9602-5ca9-9a44-c1974064cded", "relation": "summarized_in"}], "inventory": [{"type": "GlobalContextSummary", "count": 2, "samples": ["", ""], "relationships": [{"to_type": "GlobalContextSummary", "relation": "summarized_in", "count": 1}, {"to_type": "GlobalContextSummary", "relation": "\u2190 summarized_in", "count": 1}, {"to_type": "TextSummary", "relation": "\u2190 summarized_in", "count": 1}]}, {"type": "software version", "count": 2, "samples": ["aiohttp 3.14.4", "aiohttp 3.9.1"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 contains", "count": 2}, {"to_type": "organization", "relation": "\u2190 blocked", "count": 1}, {"to_type": "software version", "relation": "replaces", "count": 1}, {"to_type": "software version", "relation": "\u2190 replaces", "count": 1}, {"to_type": "system", "relation": "\u2190 must_pin", "count": 1}, {"to_type": "vulnerability", "relation": "affected_by", "count": 1}, {"to_type": "vulnerability", "relation": "fixes", "count": 1}]}, {"type": "DocumentChunk", "count": 1, "samples": [""], "relationships": [{"to_type": "software version", "relation": "contains", "count": 2}, {"to_type": "TextDocument", "relation": "is_part_of", "count": 1}, {"to_type": "TextSummary", "relation": "\u2190 made_from", "count": 1}, {"to_type": "organization", "relation": "contains", "count": 1}, {"to_type": "system", "relation": "contains", "count": 1}, {"to_type": "vulnerability", "relation": "contains", "count": 1}, {"to_type": "vulnerability type", "relation": "contains", "count": 1}]}, {"type": "TextDocument", "count": 1, "samples": ["text_78c03e21afcbee160bd0bd65816e9926"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 is_part_of", "count": 1}]}, {"type": "TextSummary", "count": 1, "samples": [""], "relationships": [{"to_type": "DocumentChunk", "relation": "made_from", "count": 1}, {"to_type": "GlobalContextSummary", "relation": "summarized_in", "count": 1}]}, {"type": "organization", "count": 1, "samples": ["snyk"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 contains", "count": 1}, {"to_type": "software version", "relation": "blocked", "count": 1}, {"to_type": "system", "relation": "blocked_in", "count": 1}]}, {"type": "system", "count": 1, "samples": ["serving stack"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 contains", "count": 1}, {"to_type": "organization", "relation": "\u2190 blocked_in", "count": 1}, {"to_type": "software version", "relation": "must_pin", "count": 1}]}, {"type": "vulnerability", "count": 1, "samples": ["cve-2025-53643"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 contains", "count": 1}, {"to_type": "software version", "relation": "\u2190 affected_by", "count": 1}, {"to_type": "software version", "relation": "\u2190 fixes", "count": 1}, {"to_type": "vulnerability type", "relation": "is_type", "count": 1}]}, {"type": "vulnerability type", "count": 1, "samples": ["http request smuggling"], "relationships": [{"to_type": "DocumentChunk", "relation": "\u2190 contains", "count": 1}, {"to_type": "vulnerability", "relation": "\u2190 is_type", "count": 1}]}], "questions": [{"question": "Which serving packages and versions were flagged, and what is the fixed version?", "answer": "Flagged: aiohttp 3.9.1 (in the serving stack, 16 high and 27 medium severity issues, including CVE-2025-53643, HTTP request smuggling). Fixed version: aiohttp 3.14.4 or later.", "node_ids": ["4468d34f-68b6-55b8-a833-824881370bbe", "1e68661b-b39b-5759-aaa9-faa2e72dd019", "4ef54d82-e26a-5eba-9a3b-b32f6d6c47c3", "8c733586-cccc-5c03-8b3f-0c844fab147e"]}]}}};
+await document.fonts.ready;  // canvas labels need the web fonts loaded first
+
+// ---------- palette ----------
+const DS = {
+  perf_lore:     { label: "Performance lore", color: "#5ef2ff", desc: "Benchmarks, dead ends, founder decisions", x: -105 },
+  security_lore: { label: "Security lore",    color: "#ff5fd2", desc: "Snyk findings and vulnerable packages",   x:  105 },
+};
+const ENTITY = {
+  model: "#7cf8ff", hardware: "#ffb547", software: "#9d8bff", concept: "#5effa8", person: "#ffd166",
+  event: "#ff8f6b", vulnerability: "#ff4d5e", "vulnerability type": "#ff7a90", "software version": "#c38bff",
+  organization: "#6bb6ff", system: "#7aa2ff",
+};
+const KIND = {
+  DocumentChunk:        { label: "Lesson",            color: "#cfd8ff", size: 4.6 },
+  TextSummary:          { label: "Summary",           color: "#7f8fd8", size: 2.2 },
+  TextDocument:         { label: "Source",            color: "#4b5578", size: 1.6 },
+  EntityType:           { label: "Type",              color: "#59618a", size: 1.4 },
+  GlobalContextSummary: { label: "Context index",     color: "#3a4aa0", size: 7.5 },
+  FactConflict:         { label: "Conflict",          color: "#ff4d5e", size: 6.5 },
+};
+const colorOf = n => n.type === "Entity" ? (ENTITY[n.entity_type] || "#c9d2ff") : (KIND[n.type]?.color || "#8a93b8");
+const kindLabel = n => n.type === "Entity" ? (n.entity_type || "entity") : (KIND[n.type]?.label || n.type);
+const clip = (s, n) => (s || "").length > n ? s.slice(0, n - 1) + "…" : (s || "");
+const prettyName = n => {
+  if (n.type === "DocumentChunk") return clip(n.text || n.name, 110);
+  if (n.type === "TextSummary" || n.type === "GlobalContextSummary" || n.type === "FactConflict") return clip(n.text || n.name, 110);
+  return n.name;
+};
+
+// ---------- data ----------
+if (!DATA) throw new Error("No data embedded: run `perfcrew graph`.");
+const nodes = [], links = [], byId = new Map();
+for (const [ds, d] of Object.entries(DATA.datasets)) {
+  for (const n of d.nodes) { const m = { ...n, ds }; nodes.push(m); byId.set(n.id, m); }
+  for (const l of d.links) if (byId.has(l.source) && byId.has(l.target)) links.push({ ...l, ds });
+}
+const adj = new Map(nodes.map(n => [n.id, new Set()]));
+links.forEach(l => { adj.get(l.source).add(l.target); adj.get(l.target).add(l.source); });
+
+// When did each node join memory? Own timestamp, else the earliest linked memory's.
+const t0 = n => (n.t_created ? +n.t_created : null);
+nodes.forEach(n => n.t = t0(n));
+for (let pass = 0; pass < 4; pass++) nodes.forEach(n => {
+  if (n.t != null) return;
+  let best = null; adj.get(n.id).forEach(id => { const t = byId.get(id).t; if (t != null && (best == null || t < best)) best = t; });
+  if (best != null) n.t = best;
+});
+const times = nodes.map(n => n.t).filter(t => t != null);
+const tMin = Math.min(...times), tMax = Math.max(...times);
+nodes.forEach(n => { if (n.t == null) n.t = tMax; });
+
+// ---------- header + stats ----------
+document.getElementById("gen").textContent = new Date(DATA.generated_at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+const countUp = (el, to) => { const t = performance.now(); const f = now => { const k = Math.min(1, (now - t) / 1200);
+  el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); };
+countUp(document.getElementById("s-mem"), DATA.stats.memories);
+countUp(document.getElementById("s-ent"), DATA.stats.entities);
+countUp(document.getElementById("s-rel"), DATA.stats.relations);
+countUp(document.getElementById("s-conf"), DATA.stats.conflicts);
+
+// ---------- datasets panel (Cognee schema inventory) ----------
+const dsEl = document.getElementById("datasets");
+const SKIP = new Set(["TextDocument", "TextSummary", "EntityType", "GlobalContextSummary"]);
+for (const [ds, d] of Object.entries(DATA.datasets)) {
+  const meta = DS[ds]; const inv = (d.inventory || []).filter(i => !SKIP.has(i.type));
+  const max = Math.max(1, ...inv.map(i => i.count));
+  const rows = inv.slice(0, 8).map(i => {
+    const c = i.type === "DocumentChunk" ? "#f4f6ff" : i.type === "FactConflict" ? "#ff4d5e" : (ENTITY[i.type] || meta.color);
+    const name = i.type === "DocumentChunk" ? "lessons" : i.type === "FactConflict" ? "conflicts" : i.type;
+    return `<div class="bar"><span class="t">${name}</span><span class="track"><span class="fill" style="width:${100 * i.count / max}%;background:${c};box-shadow:0 0 8px ${c}"></span></span><span class="c">${i.count}</span></div>`;
+  }).join("");
+  dsEl.insertAdjacentHTML("beforeend", `<div class="ds"><div class="ds-head" data-ds="${ds}"><span class="orb" style="background:${meta.color};box-shadow:0 0 14px ${meta.color}"></span>
+    <span class="ds-name" style="color:${meta.color}">${meta.label}</span></div><div class="ds-desc">${meta.desc}</div>${rows || '<div class="ds-desc">Empty: nothing learned yet.</div>'}</div>`);
+}
+
+// ---------- legend ----------
+const usedTypes = [...new Set(nodes.filter(n => n.type === "Entity").map(n => n.entity_type))];
+document.getElementById("legend").innerHTML =
+  `<span><i style="background:#f4f6ff;box-shadow:0 0 8px #fff"></i>lesson</span>` +
+  usedTypes.map(t => `<span><i style="background:${ENTITY[t] || "#c9d2ff"}"></i>${t}</span>`).join("") +
+  (DATA.stats.conflicts ? `<span><i style="background:#ff4d5e;box-shadow:0 0 8px #ff4d5e"></i>conflict</span>` : "");
+
+// ---------- 3D scene ----------
+let G;
+try {
+  G = ForceGraph3D({ controlType: "orbit" })(document.getElementById("graph"));
+} catch (e) { document.getElementById("fallback").style.display = "grid"; throw e; }
+
+const state = { lit: null, visibleUntil: Infinity, hover: null };
+const isVisible = n => n.t <= state.visibleUntil;
+const isLit = n => !state.lit || state.lit.has(n.id);
+const linkLit = l => state.lit && state.lit.has(idOf(l.source)) && state.lit.has(idOf(l.target));
+const idOf = x => (typeof x === "object" ? x.id : x);
+
+const geo = {
+  sphere: new THREE.SphereGeometry(1, 24, 24),
+  crystal: new THREE.OctahedronGeometry(1.25, 0),
+  conflict: new THREE.IcosahedronGeometry(1.2, 0),
+  ring: new THREE.TorusGeometry(1.3, 0.18, 8, 32),
+  halo: new THREE.SphereGeometry(1, 24, 24),
+};
+function makeNode(n) {
+  const c = new THREE.Color(colorOf(n));
+  const group = new THREE.Group();
+  const size = n.type === "Entity" ? 3.2 + Math.min(4, (n.degree || 1) * 0.35) : (KIND[n.type]?.size || 2);
+  let g = geo.sphere;
+  if (n.type === "DocumentChunk") g = geo.crystal;
+  else if (n.type === "FactConflict") g = geo.conflict;
+  else if (n.type === "EntityType") g = geo.ring;
+  const mat = new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: n.type === "GlobalContextSummary" ? 0.16 : 0.95,
+    wireframe: n.type === "FactConflict" || n.type === "GlobalContextSummary" });
+  const core = new THREE.Mesh(g, mat); core.scale.setScalar(size); group.add(core);
+  if (n.type === "Entity" || n.type === "DocumentChunk" || n.type === "FactConflict") {
+    const halo = new THREE.Mesh(geo.halo, new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.05, depthWrite: false }));
+    halo.scale.setScalar(size * 2.1); group.add(halo);
+  }
+  if (n.type === "Entity") {
+    const label = new SpriteText(n.name.toUpperCase(), 3.4, "#ffffff");
+    label.fontFace = "'JetBrains Mono', monospace"; label.fontWeight = "500"; label.material.depthWrite = false;
+    label.material.opacity = 0.85; label.position.y = size + 4.2; group.add(label);
+  }
+  group.userData = { core, size, n, base: mat.opacity };
+  n.__obj = group;
+  return group;
+}
+
+G.backgroundColor("#02030a")
+  .showNavInfo(false)
+  .graphData({ nodes, links })
+  .nodeThreeObject(makeNode)
+  .nodeLabel(() => "")
+  .linkColor(l => linkLit(l) ? "#ffffff" : (DS[l.ds]?.color || "#8a93b8"))
+  .linkOpacity(0.22)
+  .linkWidth(l => linkLit(l) ? 0.9 : 0.25)
+  .linkDirectionalParticles(l => linkLit(l) ? 4 : (l.relation === "contains" ? 1 : 0))
+  .linkDirectionalParticleWidth(l => linkLit(l) ? 2.4 : 1)
+  .linkDirectionalParticleSpeed(l => linkLit(l) ? 0.012 : 0.004)
+  .linkDirectionalParticleColor(l => linkLit(l) ? "#ffd166" : (DS[l.ds]?.color || "#fff"))
+  .linkVisibility(l => isVisible(byId.get(idOf(l.source))) && isVisible(byId.get(idOf(l.target))))
+  .nodeVisibility(n => isVisible(n))
+  .onNodeHover(onHover)
+  .onNodeClick(n => focusNodes(new Set([n.id, ...adj.get(n.id)]), n))
+  .cooldownTicks(220)
+  .d3VelocityDecay(0.32);
+
+// Two galaxies: pull each dataset toward its own center.
+G.d3Force("charge").strength(-55).distanceMax(160);
+nodes.forEach(n => { n.x = (DS[n.ds]?.x || 0) + (Math.random() - .5) * 60; n.y = (Math.random() - .5) * 60; n.z = (Math.random() - .5) * 60; });
+G.d3Force("link").distance(l => (l.relation === "is_a" ? 18 : 32));
+const cluster = alpha => nodes.forEach(n => {
+  const cx = DS[n.ds]?.x || 0;
+  n.vx += (cx - n.x) * 0.22 * alpha; n.vy += (0 - n.y) * 0.04 * alpha; n.vz += (0 - n.z) * 0.04 * alpha;
+});
+G.d3Force("cluster", cluster);
+
+// Bloom
+try {
+  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.95, 0.5, 0.18);
+  G.postProcessingComposer().addPass(bloom);
+} catch (e) { console.warn("bloom unavailable", e); }
+
+// Starfield + dust
+const scene = G.scene();
+const stars = new THREE.BufferGeometry(); const N = 2600; const pos = new Float32Array(N * 3);
+for (let i = 0; i < N; i++) { const r = 900 + Math.random() * 1600, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+  pos.set([r * Math.sin(ph) * Math.cos(th), r * Math.sin(ph) * Math.sin(th), r * Math.cos(ph)], i * 3); }
+stars.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+const starField = new THREE.Points(stars, new THREE.PointsMaterial({ color: 0x9fb0ff, size: 1.6, sizeAttenuation: true, transparent: true, opacity: 0.7 }));
+scene.add(starField);
+scene.fog = new THREE.FogExp2(0x02030a, 0.0009);
+
+// Dataset titles floating above each galaxy
+for (const [ds, meta] of Object.entries(DS)) {
+  if (!DATA.datasets[ds]) continue;
+  const t = new SpriteText(meta.label.toUpperCase(), 7, meta.color);
+  t.fontFace = "'Space Grotesk', sans-serif"; t.fontWeight = "600"; t.material.depthWrite = false; t.material.opacity = 0.55;
+  t.position.set(meta.x, 95, 0); scene.add(t);
+}
+
+G.cameraPosition({ x: 0, y: 30, z: 430 });
+let idle = true, angle = 0;
+const controls = G.controls(); controls.autoRotate = false;
+G.renderer().domElement.addEventListener("pointerdown", () => { idle = false; });
+
+// Animate: gentle orbit, conflict heartbeat, lit pulse
+const clock = new THREE.Clock();
+let last = 0;
+(function tick() {
+  const t = clock.getElapsedTime();
+  const ease = 1 - Math.exp(-Math.min(0.5, t - last) * 9); last = t;  // time-based: same fade at any frame rate
+  starField.rotation.y = t * 0.004;
+  if (idle && !state.lit) { angle += 0.0012; const r = 430; G.cameraPosition({ x: r * Math.sin(angle), y: 40 + 30 * Math.sin(angle * 0.7), z: r * Math.cos(angle) }); }
+  for (const n of nodes) {
+    const o = n.__obj; if (!o) continue;
+    const { core, size, base } = o.userData;
+    const lit = isLit(n);
+    const target = lit ? base : 0.06;
+    core.material.opacity += (target - core.material.opacity) * ease;
+    o.children.forEach(ch => { if (ch !== core && ch.material) ch.material.opacity += ((lit ? (ch.isSprite ? 0.85 : (state.lit ? 0.03 : 0.05)) : 0.0) - ch.material.opacity) * ease; });
+    if (n.type === "FactConflict") { const s = size * (1 + 0.18 * Math.sin(t * 4)); core.scale.setScalar(s); core.rotation.x = t * 0.8; core.rotation.y = t * 0.6; }
+    else if (n.type === "DocumentChunk") core.rotation.y = t * 0.5;
+    if (state.lit && lit && n.type !== "GlobalContextSummary") core.scale.setScalar(size * (1.05 + 0.07 * Math.sin(t * 5)));
+    else if (n.type !== "FactConflict") core.scale.setScalar(size);
+  }
+  requestAnimationFrame(tick);
+})();
+
+// ---------- hover ----------
+const tip = document.getElementById("tip");
+addEventListener("pointermove", e => { tip.style.left = Math.min(e.clientX + 16, innerWidth - 360) + "px"; tip.style.top = (e.clientY + 16) + "px"; });
+function onHover(n) {
+  document.body.style.cursor = n ? "pointer" : "";
+  if (!n) { tip.style.display = "none"; return; }
+  const c = colorOf(n);
+  tip.innerHTML = `<span class="pill" style="color:${c}">${kindLabel(n)} · ${DS[n.ds].label}</span>
+    <div class="nm">${escapeHtml(prettyName(n))}</div>
+    ${n.text && n.type !== "DocumentChunk" && n.text !== n.name ? `<div class="tx">${escapeHtml(clip(n.text, 260))}</div>` : ""}`;
+  tip.style.display = "block";
+}
+const escapeHtml = s => (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// ---------- focus / recall paths ----------
+function refreshLinks() { G.linkColor(G.linkColor()).linkWidth(G.linkWidth()).linkDirectionalParticles(G.linkDirectionalParticles()); }
+function flyTo(set) {
+  const pts = [...set].map(id => byId.get(id)).filter(n => n && n.x != null);
+  if (!pts.length) return;
+  const c = pts.reduce((a, n) => ({ x: a.x + n.x / pts.length, y: a.y + n.y / pts.length, z: a.z + n.z / pts.length }), { x: 0, y: 0, z: 0 });
+  const spread = Math.max(60, ...pts.map(n => Math.hypot(n.x - c.x, n.y - c.y, n.z - c.z)));
+  const d = spread * 2.2 + 120;
+  G.cameraPosition({ x: c.x + d * 0.35, y: c.y + d * 0.2, z: c.z + d }, c, 1600);
+}
+function focusNodes(set, single) {
+  idle = false; state.lit = set; refreshLinks(); flyTo(set);
+  document.getElementById("reset").style.display = "inline-block";
+  if (single) showAnswer(`${kindLabel(single)} · ${set.size - 1} connections`, prettyName(single) + (single.text && single.text !== single.name && single.type !== "DocumentChunk" ? "\n\n" + single.text : ""), colorOf(single), true);
+}
+function resetView() {
+  state.lit = null; refreshLinks(); document.querySelectorAll(".q").forEach(b => b.classList.remove("active"));
+  document.getElementById("answer").style.display = "none"; document.getElementById("reset").style.display = "none";
+  G.cameraPosition({ x: 0, y: 30, z: 430 }, { x: 0, y: 0, z: 0 }, 1400); idle = true; angle = 0;
+}
+document.getElementById("reset").onclick = resetView;
+
+let typing = null;
+function showAnswer(meta, text, color, instant) {
+  const box = document.getElementById("answer"); box.style.display = "block";
+  box.querySelector(".meta").innerHTML = meta;
+  const out = box.querySelector(".text"); clearInterval(typing);
+  const html = s => escapeHtml(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  if (instant) { out.innerHTML = html(text); return; }
+  let i = 0; out.innerHTML = '<span class="caret"></span>';
+  typing = setInterval(() => { i += 3; out.innerHTML = html(text.slice(0, i)) + (i < text.length ? `<span class="caret" style="background:${color}"></span>` : "");
+    if (i >= text.length) clearInterval(typing); }, 16);
+}
+
+const qEl = document.getElementById("questions");
+for (const [ds, d] of Object.entries(DATA.datasets)) for (const q of d.questions || []) {
+  const b = document.createElement("button"); b.className = "q"; b.style.color = DS[ds].color;
+  b.innerHTML = `<span class="tag">${DS[ds].label}</span><span style="color:var(--ink)">${escapeHtml(q.question)}</span>`;
+  b.onclick = () => {
+    document.querySelectorAll(".q").forEach(x => x.classList.remove("active")); b.classList.add("active");
+    const set = new Set(q.node_ids.filter(id => byId.has(id)));
+    focusNodes(set);
+    showAnswer(`Cognee recall · <b>${set.size} memories</b> lit on the path`, q.answer || "(nothing relevant)", DS[ds].color);
+  };
+  qEl.appendChild(b);
+}
+
+// Conflict card → fly to the conflict(s)
+document.getElementById("s-conf-card").onclick = () => {
+  const conf = nodes.filter(n => n.type === "FactConflict"); if (!conf.length) return;
+  const set = new Set(conf.flatMap(n => [n.id, ...adj.get(n.id)]));
+  focusNodes(set);
+  showAnswer(`improve() · <b>${conf.length} conflict${conf.length > 1 ? "s" : ""}</b> caught`, conf.map(n => n.text || n.name).join("\n\n"), "#ff4d5e");
+};
+document.querySelectorAll(".ds-head").forEach(h => h.onclick = () => {
+  const ds = h.dataset.ds; focusNodes(new Set(nodes.filter(n => n.ds === ds).map(n => n.id)));
+});
+
+// ---------- replay ----------
+const scrub = document.getElementById("scrub"), clockEl = document.getElementById("clock"), countEl = document.getElementById("rp-count");
+const fmt = t => new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+function setTime(k) {
+  state.visibleUntil = k >= 1000 ? Infinity : tMin + (tMax - tMin) * (k / 1000);
+  const vis = nodes.filter(isVisible); const lessons = vis.filter(n => n.type === "DocumentChunk").length;
+  clockEl.textContent = k >= 1000 ? "now" : fmt(state.visibleUntil);
+  countEl.textContent = `${lessons} lesson${lessons === 1 ? "" : "s"}`;
+  G.nodeVisibility(G.nodeVisibility()).linkVisibility(G.linkVisibility());
+}
+scrub.oninput = () => { stopPlay(); setTime(+scrub.value); };
+let playing = null;
+const icon = document.getElementById("play-icon");
+function stopPlay() { clearInterval(playing); playing = null; icon.setAttribute("d", "M3 1.5v11l9-5.5z"); }
+document.getElementById("play").onclick = () => {
+  if (playing) return stopPlay();
+  resetView(); let k = 0; setTime(0); scrub.value = 0; icon.setAttribute("d", "M3 1.5h3v11H3zM8 1.5h3v11H8z");
+  playing = setInterval(() => { k += 6; scrub.value = Math.min(k, 1000); setTime(Math.min(k, 1000)); if (k >= 1000) stopPlay(); }, 40);
+};
+setTime(1000);
+// Deep links for the demo: #q=0 opens a recall path, #conflict the conflict, #replay plays the timeline.
+setTimeout(() => {
+  const h = location.hash.slice(1);
+  if (h.startsWith("q=")) document.querySelectorAll(".q")[+h.slice(2)]?.click();
+  else if (h === "conflict") document.getElementById("s-conf-card").click();
+  else if (h === "replay") document.getElementById("play").click();
+}, 2500);
+addEventListener("resize", () => G.width(innerWidth).height(innerHeight));
+addEventListener("keydown", e => { if (e.key === "Escape") resetView(); });
+</script>
+</body>
+</html>

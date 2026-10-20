@@ -143,6 +143,18 @@ def cmd_forget(args):
     print(f"Forgot everything in {args.dataset}" + (f" (reason: {args.reason})" if args.reason else ""))
 
 
+def cmd_graph(args):
+    import graph
+    print("Exporting the team's Cognee memory (snapshot, both datasets, recall paths)...")
+    payload = graph.build()
+    out = graph.render(payload)
+    st = payload["stats"]
+    print(f"Memory map: {st['memories']} memories, {st['entities']} entities, {st['relations']} relations, "
+          f"{st['conflicts']} conflicts found by improve -> {out.relative_to(ROOT)}")
+    if args.open:
+        subprocess.run(["open", str(out)])
+
+
 def cmd_scan(args):
     import security
     report = security.scan()
@@ -238,6 +250,10 @@ def main():
     f.add_argument("dataset", choices=datasets)
     f.add_argument("--reason", default="")
     f.set_defaults(fn=cmd_forget)
+
+    g = sub.add_parser("graph", help="render the team's Cognee memory as an interactive 3D map")
+    g.add_argument("--open", action="store_true", help="open it in the browser")
+    g.set_defaults(fn=cmd_graph)
 
     sc = sub.add_parser("scan", help="Snyk security gate on the serving stack: PASS or BLOCK")
     sc.add_argument("--remember", action="store_true", help="store blocking findings in security_lore")
