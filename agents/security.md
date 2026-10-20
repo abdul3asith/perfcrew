@@ -47,8 +47,11 @@ Work in `/Users/abdulbasith/Developer/hackathons/ai-summit-pre-event/perfcrew`. 
      `perfcrew fix` and `perfcrew scan` again. When it passes, post `Fixed: <package> <old> -> <new>. Security PASS.`
      and set the item back to `in_progress`.
    - **PASS:** post `Security PASS: no known vulnerabilities in the serving stack, code scan clean.`
-5. Mark "Security gate (Snyk)" `completed`. Take "Founder approval" and set it `in_progress`.
-6. **Ask the founder** (numbers from @basithcodes/optimizer's message):
-   `band --session perfcrew-security ask --prompt "Saves $<X>/month, quality changes by <N> points, security PASS. Approve?" --option Approve --option Reject`
-7. Mark "Founder approval" `completed`, then post:
+5. **Serving image.** The scan also covers every package inside the vLLM image (`Serving image` section). Post its
+   high-risk lines in one short message: package, issue, and the action (`upgrade to X` or the mitigation). These don't
+   block the audit (we don't pin them), but run `perfcrew scan --remember` once so the risks go into `security_lore`.
+6. Mark "Security gate (Snyk)" `completed`. Take "Founder approval" and set it `in_progress`.
+7. **Ask the founder** (numbers from @basithcodes/optimizer's message):
+   `band --session perfcrew-security ask --prompt "Saves $<X>/month, quality changes by <N> points, security PASS (<K> serving-image risks, mitigations listed). Approve?" --option Approve --option Reject`
+8. Mark "Founder approval" `completed`, then post:
    `@basithcodes/lead Founder <APPROVED|REJECTED> <option>: saves $<X>/month, quality <N> points, security PASS.`

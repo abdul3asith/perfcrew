@@ -1,9 +1,10 @@
 .env
 .venv/
+.venv
 __pycache__/
 *.pyc
 .cognee_system/
 .data_storage/
 .DS_Store
 .cognee/
-.venv
+serving/.venv-vllm/

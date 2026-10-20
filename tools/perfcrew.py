@@ -157,7 +157,7 @@ def cmd_graph(args):
 
 def cmd_scan(args):
     import security
-    report = security.scan()
+    report = security.scan(include_stack=not args.no_stack)
     print(security.summary(report))
     for note in report["memory_notes"]:
         print(f"\nMemory note for security_lore:\n  {note}")
@@ -257,6 +257,7 @@ def main():
 
     sc = sub.add_parser("scan", help="Snyk security gate on the serving stack: PASS or BLOCK")
     sc.add_argument("--remember", action="store_true", help="store blocking findings in security_lore")
+    sc.add_argument("--no-stack", action="store_true", help="skip the full vLLM serving-image scan")
     sc.set_defaults(fn=cmd_scan)
 
     fx = sub.add_parser("fix", help="upgrade blocked packages to their fixed versions")
